@@ -1,0 +1,31 @@
+{
+  "name": "movie-history",
+  "version": "0.0.1",
+  "description": "Movie History group project for NSS",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nss-day-cohort-18/group-project-movie-history-team-1.git"
+  },
+  "author": "Taylor Perkings, Adam Myers, Gilberto Diaz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nss-day-cohort-18/group-project-movie-history-team-1/issues"
+  },
+  "homepage": "https://github.com/nss-day-cohort-18/group-project-movie-history-team-1#readme",
+  "devDependencies": {
+    "bootstrap": "^4.0.0-alpha.5",
+    "bootstrap4": "0.0.1-security",
+    "browserify": "^14.0.0",
+    "firebase": "^3.6.9",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "jquery": "^3.1.1",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "matchdep": "^1.0.1"
+  }
+}
