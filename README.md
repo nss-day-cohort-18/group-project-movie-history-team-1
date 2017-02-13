@@ -7,7 +7,7 @@ You will be split up into teams of three, and your team will build a new applica
 1. Must have the ability to log in
 1. You must use Firebase to store movies
 1. You must be able to add movies
-1. You must be able to remove movies
+1. You must be able to remove movies.
 1. Each movie must have the following properties
    1. Movie name
    1. Year released
