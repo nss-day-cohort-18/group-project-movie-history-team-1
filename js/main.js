@@ -41,8 +41,8 @@ let removeUser = require('./firebase/deleteFirebase.js');
 
 let movieLoad = require('./movies/movieLoad.js');
 
-
-
+// test for api call for movie info
+// console.log("hello?", movieLoad.pullMovieByTitle("rambo"));
 
 /*============================================*/
 /*==================LOGIN=====================*/
