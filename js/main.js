@@ -33,16 +33,16 @@ favorite movies. This information includes:
 /*============================================*/
 /*================REQUIRES====================*/
 /*============================================*/
-
-let readFirebase = require('./firebase/readFirebase.js');
-let createUser = require('./firebase/createUser.js');
-let updateUser = require('./firebase/updateFirebase.js');
-let removeUser = require('./firebase/deleteFirebase.js');
+let config = require('./firebase-js/configFirebase.js');
+let readFirebase = require('./firebase-js/readFirebase.js');
+let createUser = require('./firebase-js/createUser.js');
+let updateUser = require('./firebase-js/updateFirebase.js');
+let removeUser = require('./firebase-js/deleteFirebase.js');
 
 let movieLoad = require('./movies/movieLoad.js');
 
-
-
+// test for api call for movie info
+// console.log("hello?", movieLoad.pullMovieByTitle("rambo"));
 
 /*============================================*/
 /*==================LOGIN=====================*/

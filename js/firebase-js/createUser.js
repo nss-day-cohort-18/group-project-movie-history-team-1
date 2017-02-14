@@ -1,5 +1,5 @@
 "use strict";
-let firebase = require("./configFirebase.js"),
+let firebase = require("./configFirebase"),
 	provider = new firebase.auth.GoogleAuthProvider(),
 	currentUser = null;
 
