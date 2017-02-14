@@ -15,6 +15,7 @@ var config = {
   authDomain: fbData.authDomain
 };
 
+
 firebase.initializeApp(config);
 
 module.exports = firebase;
@@ -67,16 +68,16 @@ function deleteMovie(uid) {
 	});
 }
 
-module.exports = deleteMovie;
+module.exports = {deleteMovie};
 },{"./configFirebase":1}],4:[function(require,module,exports){
-"use strict";
+'use strict';
 
 function getKey() {
-  return {
-    apiKey: "AIzaSyCLx0Z7SXMAY97o9dudtojVqKrr58rtwno",
-    authDomain: "movie-history-team-team.firebaseapp.com",
-    databaseURL: "https://movie-history-team-team.firebaseio.com"
-  };
+    return {
+        apiKey: 'AIzaSyCLx0Z7SXMAY97o9dudtojVqKrr58rtwno',
+        authDomain: 'movie-history-team-team.firebaseapp.com',
+        databaseURL: 'https://movie-history-team-team.firebaseio.com'
+    };
 }
 
 module.exports = getKey;
@@ -96,7 +97,8 @@ function getMovies(userID) {
 	});
 }
 
-module.exports = getMovies;
+
+module.exports = {getMovies};
 
 
 },{"./configFirebase":1}],6:[function(require,module,exports){
@@ -119,6 +121,7 @@ function addMovie(movieObj) {
 }
 
 module.exports = addMovie;
+
 },{"./configFirebase":1}],7:[function(require,module,exports){
 "use strict";
 
@@ -446,6 +449,7 @@ function getMovieURL(){
 }
 
 module.exports = getMovieURL;
+
 },{"./movie-getter.js":8}],10:[function(require,module,exports){
 "use strict";
 
@@ -458,6 +462,7 @@ function pullMovieByTitle(searchTitle) {
 return new Promise( function(resolve, reject){
 		$.ajax({
 	    url: movieConfig().url,
+
 	    type: 'GET',
 	    data: { query: searchTitle, append_to_response: "images", include_image_language: "en"}
 		}).done( function(movieData) {
