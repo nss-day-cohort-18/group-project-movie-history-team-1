@@ -1,12 +1,44 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1}],3:[function(require,module,exports){
+"use strict";
+let firebase = require("./configFirebase.js"),
+	provider = new firebase.auth.GoogleAuthProvider(),
+	currentUser = null;
+
+firebase.auth().onAuthStateChanged( (user) => {
+	if (user) {
+		console.log("Current user logged in: ", currentUser);
+		currentUser = user.uid;
+	} else {
+		currentUser = null;
+		console.log("User is not logged in");
+	}
+});
+
+
+function logInGoogle() {
+	return firebase.auth().signInWithPopup(provider);
+}
+function logOut() {
+	return firebase.auth().signOut();
+}
+function getUser() {
+	return currentUser;
+}
+function setUser(val) {
+	currentUser = val;
+}
+
+module.exports = {logInGoogle, logOut, getUser, setUser};
+
+},{"./configFirebase.js":1}],3:[function(require,module,exports){
 arguments[4][1][0].apply(exports,arguments)
 },{"dup":1}],4:[function(require,module,exports){
 arguments[4][1][0].apply(exports,arguments)
 },{"dup":1}],5:[function(require,module,exports){
+arguments[4][1][0].apply(exports,arguments)
+},{"dup":1}],6:[function(require,module,exports){
 "use strict";
 
 /* 
@@ -245,11 +277,35 @@ Listens for when the user wants to sign out of their account, sign up,
 or a different user would like to sign in.
 */
 
-('.logUser').click(function(event) {
-	createUser.goToUserLoginPage();
+('.loginUser').click(function(event) {
+	createUser.logIn();
+});
+
+('.logoutUser').click(function(event) {
+	createUser.logOut();
+});
+
+('.getUser').click(function(event) {
+	createUser.getUser();
 });
 
 
-},{"./firebase/createUser.js":1,"./firebase/deleteFirebase.js":2,"./firebase/readFirebase.js":3,"./firebase/updateFirebase.js":4,"./movies/movieLoad.js":6}],6:[function(require,module,exports){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+},{"./firebase/createUser.js":2,"./firebase/deleteFirebase.js":3,"./firebase/readFirebase.js":4,"./firebase/updateFirebase.js":5,"./movies/movieLoad.js":7}],7:[function(require,module,exports){
 arguments[4][1][0].apply(exports,arguments)
-},{"dup":1}]},{},[5]);
+},{"dup":1}]},{},[6]);
