@@ -1,1 +1,5 @@
-lib/node_modules/
+.idea/
+lib/node_modules
+js/firebase-js/fb-getter.js
+js/movies/movie-getter.js
+lib/.sass-cache

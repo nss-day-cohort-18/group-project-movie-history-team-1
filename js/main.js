@@ -76,7 +76,7 @@ $('.sign-up').click(function(event) {
 Sends you to the main movie-listing page without signup
 */
 
-('.browse-movies').click(function(event) {
+$('.browse-movies').click(function(event) {
 	movieLoad.movieAPI().then(
 		() => {
 			$('.login').addClass('hidden');
@@ -154,15 +154,45 @@ $('.btn-group').click(function(event) {
 Function that checks OMDb and our firebase database for specific keywords
 to search movies with the search input.
 */
+let formControl = (submitValue) => {
+	$('.card').remove();
+	let yearPattern = /[0-9]/g;
+	let searchValues = submitValue.split(" ");
+	let yearValues = [];
+	let keyWordValues = [];
+	for (var search = 0; search < searchValues.length; search++) {
+		if (searchValues[search].length === 4 && searchValues[search].match(yearPattern)) {
+			yearValues.push(searchValues[search]);
+		} else {
+			keyWordValues.push(searchValues[search]);
+		}
+	}
+	//go to firebase to search related movies
+	// readFirebase.readMovies();
+	//also go to movie load to compare movies with the api call
 
-('.keyword-search').keyup(function(event) {
+	if (keyWordValues.length === 0) {
+		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
+	} else {
+		if (yearValues.length === 0) {
+			console.log(movieLoad.pullMovieByTitle(submitValue));
+		} else {
+			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
+		}
+	}
+};
+
+$('.form-control').keyup(function(event) {
     var code = event.which; 
     if(code==13) {
-    	//go to firebase to search related movies
-    	readFirebase.readMovies();
-    	//also go to movie load to compare movies with the api call
-    	movieLoad.checkMovies();
+    	formControl(event.target.value);
+    	event.target.value = '';
     }
+});
+
+$('.form-control-btn').click(function(event) {
+	formControl($('.form-control').val());
+	document.getElementsByClassName("form-control")[0].value = '';
 });
 
 
@@ -172,7 +202,7 @@ This function adds movies dto the user's watched-list within firebase and change
 watched boolean value to false. It also adds the movie to the user's movie list.
 */
 
-('.card').click(function(event) {
+$('.card').click(function(event) {
 	if (event.target.hasClass('watchlist')) {
 		//unwatched is a sass comp that removes hidden from the star-rating
 		//as well at the delete movie button.
@@ -193,7 +223,7 @@ Changes the card's watch to true. Also includes sass comp that
 changes the background-color and star-rating to whatever the user chooses
 */
 
-('.star-rating').change(function(event) {
+$('.star-rating').change(function(event) {
 	$(this).parent('.movie').addClass('watched');
 	let watch = true;
 	let targetVal = parseInt($(event.target).val());
@@ -221,7 +251,7 @@ Listens for a card to be deleted from the movie list
 ONLY AVALABLE WITH THE USER'S WATCHED OR UNWATCHED MOVIES
 */
 
-('.movie-delete').click(function(event) {
+$('.movie-delete').click(function(event) {
 	let cardMovieId = $(this).parent('.movie-card').id;
 	$(this).parent('.movie-card').remove();
 	removeUser.removeFromLocalArray(cardMovieId).then(
@@ -236,15 +266,15 @@ Listens for when the user wants to sign out of their account, sign up,
 or a different user would like to sign in.
 */
 
-('.login-user').click(function(event) {
+$('.login-user').click(function(event) {
 	createUser.logIn();
 });
 
-('.logout-user').click(function(event) {
+$('.logout-user').click(function(event) {
 	createUser.logOut();
 });
 
-('.get-user').click(function(event) {
+$('.get-user').click(function(event) {
 	createUser.getUser();
 });
 

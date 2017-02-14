@@ -16,4 +16,4 @@ function addMovie(movieObj) {
 	});
 }
 
-module.exports = {addMovie};
+module.exports = addMovie;
