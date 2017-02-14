@@ -1,8 +1,21 @@
-.nav-container, .filter-group {
+.nav-container, .filter-group, .my-jumbotron {
   margin: 1rem 5%; }
+
+.jumbotron {
+  border-radius: 2em; }
+  .jumbotron .h1-jumbotron {
+    margin-bottom: 2em;
+    font-weight: lighter; }
+  .jumbotron .link-jumbotron:hover {
+    text-decoration: none; }
+  .jumbotron .link-jumbotron:focus {
+    text-decoration: none; }
 
 .filter-checked {
   background-color: cornflowerblue;
   color: #f2f2f2; }
+
+.log-btn {
+  font-size: 5em; }
 
 /*# sourceMappingURL=style.css.map */
