@@ -8,15 +8,17 @@ let cardMovieTemplate = function(movie, userId) {
             year: movie.release_date.slice(0, 4),
             myRatings: userId ? `${movie.ratings}` : `${movie.popularity}`
         };
-        let cardTemplate = `<div class="card" style="width: 20rem;">
-                                <img class="card-img-top" src="${cardItems.image}" alt="Card image cap">
-                                <div class="card-block">
-                                    <h4 class="card-title">${cardItems.title}</h4>
-                                    <p class="card-text">${cardItems.year}</p>
+        let cardTemplate = `<div class="row">
+                                <div class="col-sm-6 col-md-4">
+                                    <div class="thumbnail">
+                                        <img src="https://image.tmdb.org/t/p/w500${cardItems.image}" alt="Movie image ${cardItems.title}">
+                                        <div class="caption">
+                                            <h3>${cardItems.title}</h3>
+                                            <p>${cardItems.year}</p>
+                                            <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">${cardItems.myRatings}</li>
-                                </ul>
                             </div>`;
         resolve(cardTemplate);
         reject();
