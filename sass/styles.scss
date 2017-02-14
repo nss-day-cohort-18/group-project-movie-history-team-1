@@ -1,22 +1,9 @@
-ul {
-  margin-top: 1rem;
-}
-.form-inline, ul {
-  display: inline-block;
+.nav-container, .filter-group {
+  margin: 1rem 5%;
 }
 
-.my-nav {
-  background-color: lightgray;
-  border-radius: 0.2rem;
-  padding: 0 1rem;
-  margin-top: 1rem;
+.filter-checked{
+  background-color: cornflowerblue;
+  color: #f2f2f2;
 }
 
-.my-navbar ul li {
-  display: inline-block;
-
-  padding: 1em;
-
-  text-transform: uppercase;
-  list-style: none;
-}
