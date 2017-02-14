@@ -10,7 +10,7 @@ return new Promise( function(resolve, reject){
 		$.ajax({
 	    url: movieConfig.getMovieURL().url,
 	    type: 'GET',
-	    data: { t: searchTitle, tomatoes: true, y: movieYear}
+	    data: { t: searchTitle, tomatoes: true, y: movieYear},
 	    success: resolve()
 		});
 	});
