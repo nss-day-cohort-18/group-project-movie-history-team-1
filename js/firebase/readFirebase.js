@@ -2,6 +2,7 @@
 
 let firebase = require("./configFirebase");
 
+// specifying userID to sort movie per that specific user
 function getMovies(userID) {
 	return new Promise( function (resolve, reject){
 		$.ajax({

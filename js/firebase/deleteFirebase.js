@@ -2,10 +2,11 @@
 
 let firebase = require("./configFirebase");
 
-function deleteMovie(movieID) {
+//specifying uid to delete from fb
+function deleteMovie(uid) {
 	return new Promise( function (resolve, reject){
 		$.ajax({
-			url: `https://movie-history-team-team.firebaseio.com/movies/${movieID}.json`,
+			url: `https://movie-history-team-team.firebaseio.com/movies/${uid}.json`,
 			method: 'DELETE'
 		}).done( function(){
 			resolve();
