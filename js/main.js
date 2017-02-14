@@ -236,7 +236,31 @@ Listens for when the user wants to sign out of their account, sign up,
 or a different user would like to sign in.
 */
 
-('.logUser').click(function(event) {
-	createUser.goToUserLoginPage();
+('.loginUser').click(function(event) {
+	createUser.logIn();
 });
+
+('.logoutUser').click(function(event) {
+	createUser.logOut();
+});
+
+('.getUser').click(function(event) {
+	createUser.getUser();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
