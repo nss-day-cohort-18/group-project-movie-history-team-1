@@ -13,5 +13,5 @@ function getMovies(userID) {
 	});
 }
 
-module.exports = {getMovies};
+module.exports = getMovies;
 

@@ -8,7 +8,7 @@ let movieConfig = require("./movieConfig.js");
 function pullMovieByTitle(searchTitle) {
 return new Promise( function(resolve, reject){
 		$.ajax({
-	    url: movieConfig.getMovieURL().url,
+	    url: movieConfig().url,
 	    type: 'GET',
 	    data: { query: searchTitle, append_to_response: "images", include_image_language: "en"}
 		}).done( function(movieData) {

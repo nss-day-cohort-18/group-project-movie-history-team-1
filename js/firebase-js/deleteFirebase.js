@@ -14,4 +14,4 @@ function deleteMovie(uid) {
 	});
 }
 
-module.exports = {deleteMovie};
+module.exports = deleteMovie;

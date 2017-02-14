@@ -24,3 +24,5 @@ let cardMovieTemplate = function(movie, userId) {
         reject();
     });
 };
+
+module.exports = cardMovieTemplate;
