@@ -3,23 +3,19 @@
 let cardMovieTemplate = function(movie, userId) {
     return new Promise(function(resolve, reject) {
         let cardItems = {
-            image: movie.img,
+            image: movie.poster_path,
             title: movie.title,
-            year: movie.year,
-            actors: movie.actors,
-            ratings: movie.ratings,
-            myRatings: movie ? `${movie.myRatings}` : ''
+            year: movie.release_date.slice(0, 4),
+            myRatings: userId ? `${movie.ratings}` : `${movie.popularity}`
         };
         let cardTemplate = `<div class="card" style="width: 20rem;">
-                                <img class="card-img-top" src="${movie.image}" alt="Card image cap">
+                                <img class="card-img-top" src="${cardItems.image}" alt="Card image cap">
                                 <div class="card-block">
-                                    <h4 class="card-title">${movie.title}</h4>
-                                    <p class="card-text">${movie.year}</p>
-                                    <p class="card-text">${movie.actors}</p>
+                                    <h4 class="card-title">${cardItems.title}</h4>
+                                    <p class="card-text">${cardItems.year}</p>
                                 </div>
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">${movie.ratings}</li>
-                                    <li class="list-group-item">${movie.myRatings}</li>
+                                    <li class="list-group-item">${cardItems.myRatings}</li>
                                 </ul>
                             </div>`;
         resolve(cardTemplate);
