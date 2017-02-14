@@ -236,15 +236,15 @@ Listens for when the user wants to sign out of their account, sign up,
 or a different user would like to sign in.
 */
 
-('.loginUser').click(function(event) {
+('.login-user').click(function(event) {
 	createUser.logIn();
 });
 
-('.logoutUser').click(function(event) {
+('.logout-user').click(function(event) {
 	createUser.logOut();
 });
 
-('.getUser').click(function(event) {
+('.get-user').click(function(event) {
 	createUser.getUser();
 });
 
