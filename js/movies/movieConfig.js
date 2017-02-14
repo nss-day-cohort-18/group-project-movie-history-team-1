@@ -13,4 +13,4 @@ function getMovieURL(){
 	return movieConfig;
 }
 
-module.exports = {getMovieURL};
+module.exports = getMovieURL;
