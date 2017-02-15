@@ -1,16 +1,15 @@
-"use strict";
-let movieGetter = require('./movie-getter.js'),
-		movieData = movieGetter();
+// "use strict";
+// let key = require('./movie-getter.js'),
+// 		movieData = key();
 
 
-var movieConfig = {
-	otherapiURL: movieData.omDbURL,
-  url: movieData.MDBurl
-};
+// var movieConfig = {
+//   	url: movieData.MDBurl
+// };
 
-// safekeeping url in one location for easy transition if needed
-function getMovieURL(){
-	return movieConfig;
-}
+// // safekeeping url in one location for easy transition if needed
+// function getMovieURL(){
+// 	return movieConfig;
+// }
 
-module.exports = getMovieURL;
+// module.exports = {getMovieURL, movieConfig};
