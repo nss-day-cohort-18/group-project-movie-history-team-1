@@ -48,42 +48,37 @@ let movieLoad = require('./movies/movieLoad.js');
 /*==================LOGIN=====================*/
 /*============================================*/
 
-/* 
-
-This function looks to firebase to check email/username and password 
-for member login, then opens the user main page.
-*/
-
-$('.login-submit').click(function(event) {
-	let userEmailUserName = $('.user-email'),
-		userPassword = $('.user-password');
-	readFirebase.checkForUser(userEmailUserName, userPassword);
+ //login
+$("#login").click(()=>{
+	console.log('you clicked login');
+	createUser.logInGoogle();  
 });
 
-
-/*
-
-This function brings up a form to allow you to sign up as a user for our application.
-*/
-
-$('.sign-up').click(function(event) {
-	createUser.newUser();
+//logout
+$("#logout").click(()=>{
+	console.log('you clicked logout');
+	createUser.logOut();
+	$("#logout").addClass("hidden");
+    $("#login").removeClass("hidden");
 });
 
-
-/*
-
-Sends you to the main movie-listing page without signup
-*/
-
-$('.browse-movies').click(function(event) {
-	movieLoad.movieAPI().then(
-		() => {
-			$('.login').addClass('hidden');
-			$('.visitor').removeClass('hidden');
-		}
-	);
+//register
+$("#register").click(()=>{
+	console.log("youclickedregister");
+	if(email.val() && password.val()){
+	createUser.setUser();
+	}
 });
+
+//Sends you to the main movie-listing page without signup
+// $('.browse-movies').click(function(event) {
+// 	movieLoad.movieAPI().then(
+// 		() => {
+// 			$('.login').addClass('hidden');
+// 			$('.visitor').removeClass('hidden');
+// 		}
+// 	);
+// });
 
 
 
