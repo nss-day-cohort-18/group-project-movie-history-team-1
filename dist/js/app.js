@@ -15,7 +15,6 @@ var config = {
   authDomain: fbData.authDomain
 };
 
-
 firebase.initializeApp(config);
 
 module.exports = firebase;
@@ -68,16 +67,16 @@ function deleteMovie(uid) {
 	});
 }
 
-module.exports = {deleteMovie};
+module.exports = deleteMovie;
 },{"./configFirebase":1}],4:[function(require,module,exports){
-'use strict';
-
+"use strict";
+//private info for my eyes only
 function getKey() {
-    return {
-        apiKey: 'AIzaSyCLx0Z7SXMAY97o9dudtojVqKrr58rtwno',
-        authDomain: 'movie-history-team-team.firebaseapp.com',
-        databaseURL: 'https://movie-history-team-team.firebaseio.com'
-    };
+  return {
+    apiKey: "AIzaSyB_YuUHbsQOXpU9fhBK2ep5eWxfLvg78XY",
+    authDomain: "group-project-b2ed0.firebaseapp.com",
+    databaseURL: "https://group-project-b2ed0.firebaseio.com/"
+  };
 }
 
 module.exports = getKey;
@@ -97,8 +96,7 @@ function getMovies(userID) {
 	});
 }
 
-
-module.exports = {getMovies};
+module.exports = getMovies;
 
 
 },{"./configFirebase":1}],6:[function(require,module,exports){
@@ -121,7 +119,6 @@ function addMovie(movieObj) {
 }
 
 module.exports = addMovie;
-
 },{"./configFirebase":1}],7:[function(require,module,exports){
 "use strict";
 
@@ -267,7 +264,7 @@ $('.btn-group').click(function(event) {
 		case "watched": 
 			console.log(buttonValue);
 			break;
-		case "favourites": 
+		case "favorites": 
 			console.log(buttonValue);
 			break;
 	}
@@ -423,15 +420,13 @@ $('.get-user').click(function(event) {
 },{"./firebase-js/configFirebase.js":1,"./firebase-js/createUser.js":2,"./firebase-js/deleteFirebase.js":3,"./firebase-js/readFirebase.js":5,"./firebase-js/updateFirebase.js":6,"./movies/movieLoad.js":10}],8:[function(require,module,exports){
 "use strict";
 
-// keeps the api key secret from prying eyes
-function getURL() {
+function getKey() {
   return {
-    omDbURL: "http://www.omdbapi.com/?",
-    MDBurl: "https://api.themoviedb.org/3/search/movie?api_key=838eabeda5ff3bb866d5c5fc023308d1"
+   url: `https://api.themoviedb.org/3/search/movie?api_key=abd89fc957e293be8947e9a9ac9187bc&language=en-US&query=rambo&page=1&include_adult=false`
   };
 }
 
-module.exports = getURL;
+module.exports = getKey;
 },{}],9:[function(require,module,exports){
 "use strict";
 let movieGetter = require('./movie-getter.js'),
@@ -449,7 +444,6 @@ function getMovieURL(){
 }
 
 module.exports = getMovieURL;
-
 },{"./movie-getter.js":8}],10:[function(require,module,exports){
 "use strict";
 
@@ -462,7 +456,6 @@ function pullMovieByTitle(searchTitle) {
 return new Promise( function(resolve, reject){
 		$.ajax({
 	    url: movieConfig().url,
-
 	    type: 'GET',
 	    data: { query: searchTitle, append_to_response: "images", include_image_language: "en"}
 		}).done( function(movieData) {

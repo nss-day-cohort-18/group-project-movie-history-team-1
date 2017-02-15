@@ -142,7 +142,7 @@ $('.btn-group').click(function(event) {
 		case "watched": 
 			console.log(buttonValue);
 			break;
-		case "favourites": 
+		case "favorites": 
 			console.log(buttonValue);
 			break;
 	}
