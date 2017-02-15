@@ -47,42 +47,37 @@ let config = require('./firebase-js/configFirebase.js'),
 /*==================LOGIN=====================*/
 /*============================================*/
 
-/* 
-
-This function looks to firebase to check email/username and password 
-for member login, then opens the user main page.
-*/
-
-$('.login-submit').click(function(event) {
-	let userEmailUserName = $('.user-email'),
-		userPassword = $('.user-password');
-	readFirebase.checkForUser(userEmailUserName, userPassword);
+ //login
+$("#login").click(()=>{
+	console.log('you clicked login');
+	createUser.logInGoogle();  
 });
 
-
-/*
-
-This function brings up a form to allow you to sign up as a user for our application.
-*/
-
-$('.sign-up').click(function(event) {
-	createUser.newUser();
+//logout
+$("#logout").click(()=>{
+	console.log('you clicked logout');
+	createUser.logOut();
+	$("#logout").addClass("hidden");
+    $("#login").removeClass("hidden");
 });
 
-
-/*
-
-Sends you to the main movie-listing page without signup
-*/
-
-$('.browse-movies').click(function(event) {
-	movieLoad.movieAPI().then(
-		() => {
-			$('.login').addClass('hidden');
-			$('.visitor').removeClass('hidden');
-		}
-	);
+//register
+$("#register").click(()=>{
+	console.log("youclickedregister");
+	if(email.val() && password.val()){
+	createUser.setUser();
+	}
 });
+
+//Sends you to the main movie-listing page without signup
+// $('.browse-movies').click(function(event) {
+// 	movieLoad.movieAPI().then(
+// 		() => {
+// 			$('.login').addClass('hidden');
+// 			$('.visitor').removeClass('hidden');
+// 		}
+// 	);
+// });
 
 
 
@@ -131,17 +126,18 @@ Function that filters the user page. The filters include:
 
 $('.btn-group').click(function(event) {
 	let buttonValue = $(event.target).val();
+	$(".card").addClass("hidden");
 	switch (buttonValue) {
 		case "untracked": 
+			$('.untracked').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 		case "unwatched": 
+			$('.unwatched').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 		case "watched": 
-			console.log(buttonValue);
-			break;
-		case "favorites": 
+			$('.watched').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 	}
