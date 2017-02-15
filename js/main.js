@@ -127,17 +127,18 @@ Function that filters the user page. The filters include:
 
 $('.btn-group').click(function(event) {
 	let buttonValue = $(event.target).val();
+	$(".card").addClass("hidden");
 	switch (buttonValue) {
 		case "untracked": 
+			$('.untracked').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 		case "unwatched": 
+			$('.unwatched').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 		case "watched": 
-			console.log(buttonValue);
-			break;
-		case "favorites": 
+			$('.watched').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 	}
