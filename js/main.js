@@ -33,14 +33,13 @@ favorite movies. This information includes:
 /*============================================*/
 /*================REQUIRES====================*/
 /*============================================*/
-let config = require('./firebase-js/configFirebase.js');
-let readFirebase = require('./firebase-js/readFirebase.js');
-let createUser = require('./firebase-js/createUser.js');
-let updateUser = require('./firebase-js/updateFirebase.js');
-let removeUser = require('./firebase-js/deleteFirebase.js');
-
-let movieLoad = require('./movies/movieLoad.js');
-
+let config = require('./firebase-js/configFirebase.js'),
+	readFirebase = require('./firebase-js/readFirebase.js'),
+	createUser = require('./firebase-js/createUser.js'),
+	updateUser = require('./firebase-js/updateFirebase.js'),
+	removeUser = require('./firebase-js/deleteFirebase.js'),
+	movieLoad = require('./movies/movieLoad.js'),
+	printer = require ('./templates/movieTemplate.js');
 // test for api call for movie info
 // console.log("hello?", movieLoad.pullMovieByTitle("rambo"));
 
@@ -150,47 +149,40 @@ $('.btn-group').click(function(event) {
 Function that checks OMDb and our firebase database for specific keywords
 to search movies with the search input.
 */
-let formControl = (submitValue) => {
-	$('.card').remove();
-	let yearPattern = /[0-9]/g;
-	let searchValues = submitValue.split(" ");
-	let yearValues = [];
-	let keyWordValues = [];
-	for (var search = 0; search < searchValues.length; search++) {
-		if (searchValues[search].length === 4 && searchValues[search].match(yearPattern)) {
-			yearValues.push(searchValues[search]);
-		} else {
-			keyWordValues.push(searchValues[search]);
-		}
-	}
+// let formControl = (submitValue) => {
+	
+	
+// 	}
 	//go to firebase to search related movies
 	// readFirebase.readMovies();
 	//also go to movie load to compare movies with the api call
 
-	if (keyWordValues.length === 0) {
-		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
-	} else {
-		if (yearValues.length === 0) {
-			console.log(movieLoad.pullMovieByTitle(submitValue));
-		} else {
-			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
-		}
-	}
-};
+// 	if (keyWordValues.length === 0) {
+// 		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
+// 	} else {
+// 		if (yearValues.length === 0) {
+// 			console.log(movieLoad.pullMovieByTitle(submitValue));
+// 		} else {
+// 			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
+// 		}
+// 	}
+// };
 
 $('.form-control').keyup(function(event) {
-    var code = event.which; 
-    if(code==13) {
-    	formControl(event.target.value);
-    	event.target.value = '';
-    }
+    	if(event.which == 13) {
+    		// $('.card').remove();
+        	console.log('this.value line 180:', $(this).val());
+        	movieLoad.pullMovieByTitle($(this).val())
+			.then((movieData)=>{
+			console.log('movieData passed to parse:', movieData);
+			 movieLoad.parseMovies(movieData)
+			 .then((moviesArray)=>{
+			 $(".form-control").html("");
+			 printer.printCards(moviesArray);
+		});
+     });
+   }
 });
-
-$('.form-control-btn').click(function(event) {
-	formControl($('.form-control').val());
-	document.getElementsByClassName("form-control")[0].value = '';
-});
-
 
 /* 
 

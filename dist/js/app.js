@@ -155,14 +155,13 @@ favorite movies. This information includes:
 /*============================================*/
 /*================REQUIRES====================*/
 /*============================================*/
-let config = require('./firebase-js/configFirebase.js');
-let readFirebase = require('./firebase-js/readFirebase.js');
-let createUser = require('./firebase-js/createUser.js');
-let updateUser = require('./firebase-js/updateFirebase.js');
-let removeUser = require('./firebase-js/deleteFirebase.js');
-
-let movieLoad = require('./movies/movieLoad.js');
-
+let config = require('./firebase-js/configFirebase.js'),
+	readFirebase = require('./firebase-js/readFirebase.js'),
+	createUser = require('./firebase-js/createUser.js'),
+	updateUser = require('./firebase-js/updateFirebase.js'),
+	removeUser = require('./firebase-js/deleteFirebase.js'),
+	movieLoad = require('./movies/movieLoad.js'),
+	printer = require ('./templates/movieTemplate.js');
 // test for api call for movie info
 // console.log("hello?", movieLoad.pullMovieByTitle("rambo"));
 
@@ -276,47 +275,40 @@ $('.btn-group').click(function(event) {
 Function that checks OMDb and our firebase database for specific keywords
 to search movies with the search input.
 */
-let formControl = (submitValue) => {
-	$('.card').remove();
-	let yearPattern = /[0-9]/g;
-	let searchValues = submitValue.split(" ");
-	let yearValues = [];
-	let keyWordValues = [];
-	for (var search = 0; search < searchValues.length; search++) {
-		if (searchValues[search].length === 4 && searchValues[search].match(yearPattern)) {
-			yearValues.push(searchValues[search]);
-		} else {
-			keyWordValues.push(searchValues[search]);
-		}
-	}
+// let formControl = (submitValue) => {
+	
+	
+// 	}
 	//go to firebase to search related movies
 	// readFirebase.readMovies();
 	//also go to movie load to compare movies with the api call
 
-	if (keyWordValues.length === 0) {
-		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
-	} else {
-		if (yearValues.length === 0) {
-			console.log(movieLoad.pullMovieByTitle(submitValue));
-		} else {
-			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
-		}
-	}
-};
+// 	if (keyWordValues.length === 0) {
+// 		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
+// 	} else {
+// 		if (yearValues.length === 0) {
+// 			console.log(movieLoad.pullMovieByTitle(submitValue));
+// 		} else {
+// 			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
+// 		}
+// 	}
+// };
 
 $('.form-control').keyup(function(event) {
-    var code = event.which; 
-    if(code==13) {
-    	formControl(event.target.value);
-    	event.target.value = '';
-    }
+    	if(event.which == 13) {
+    		// $('.card').remove();
+        	console.log('this.value line 180:', $(this).val());
+        	movieLoad.pullMovieByTitle($(this).val())
+			.then((movieData)=>{
+			console.log('movieData passed to parse:', movieData);
+			 movieLoad.parseMovies(movieData)
+			 .then((moviesArray)=>{
+			 $(".form-control").html("");
+			 printer.printCards(moviesArray);
+		});
+     });
+   }
 });
-
-$('.form-control-btn').click(function(event) {
-	formControl($('.form-control').val());
-	document.getElementsByClassName("form-control")[0].value = '';
-});
-
 
 /* 
 
@@ -417,37 +409,21 @@ $('.get-user').click(function(event) {
 
 
 
-},{"./firebase-js/configFirebase.js":1,"./firebase-js/createUser.js":2,"./firebase-js/deleteFirebase.js":3,"./firebase-js/readFirebase.js":5,"./firebase-js/updateFirebase.js":6,"./movies/movieLoad.js":10}],8:[function(require,module,exports){
+},{"./firebase-js/configFirebase.js":1,"./firebase-js/createUser.js":2,"./firebase-js/deleteFirebase.js":3,"./firebase-js/readFirebase.js":5,"./firebase-js/updateFirebase.js":6,"./movies/movieLoad.js":9,"./templates/movieTemplate.js":10}],8:[function(require,module,exports){
 "use strict";
 
 function getKey() {
   return {
-   url: `https://api.themoviedb.org/3/search/movie?api_key=abd89fc957e293be8947e9a9ac9187bc&language=en-US&query=rambo&page=1&include_adult=false`
+    apiKey: "abd89fc957e293be8947e9a9ac9187bc",
   };
 }
 
-module.exports = getKey;
+module.exports = {getKey};
 },{}],9:[function(require,module,exports){
 "use strict";
-let movieGetter = require('./movie-getter.js'),
-		movieData = movieGetter();
 
-
-var movieConfig = {
-	otherapiURL: movieData.omDbURL,
-  url: movieData.MDBurl
-};
-
-// safekeeping url in one location for easy transition if needed
-function getMovieURL(){
-	return movieConfig;
-}
-
-module.exports = getMovieURL;
-},{"./movie-getter.js":8}],10:[function(require,module,exports){
-"use strict";
-
-let movieConfig = require("./movieConfig.js");
+let key = require ("./movie-getter.js");
+	// movieConfig = require("./movieConfig.js");
 
 
 // grabing a movie from omdb, testing with title or year
@@ -455,34 +431,111 @@ let movieConfig = require("./movieConfig.js");
 function pullMovieByTitle(searchTitle) {
 return new Promise( function(resolve, reject){
 		$.ajax({
-	    url: movieConfig().url,
-	    type: 'GET',
-	    data: { query: searchTitle, append_to_response: "images", include_image_language: "en"}
+	    url: `https://api.themoviedb.org/3/search/movie?api_key=${key.getKey().apiKey}&language=en-US&query=${searchTitle}&page=1&include_adult=false`
 		}).done( function(movieData) {
 			resolve(movieData);
 		});
 	});
 }
 
+function parseMovies(movieData) {
+	return new Promise((resolve, reject)=>{
+	let moviesArray = [],
+		moviesObject = {},
+		results = movieData.results;
+		results.forEach((movie)=> {
+			moviesObject = {
+				poster : movie.poster_path,
+				title : movie.title,
+				id : movie.id
+		};
+		moviesArray.push(moviesObject);
+	});
+		console.log('moviesArray passed from parser:', moviesArray);
+		resolve(moviesArray);
+	});
+}
 
-// if above function fails still to break up year and movie searches
-// y specifics year to api for search
-// function pullMovieByYear(movieTitle, movieYear) {
-// 	return new Promise( function(resolve, reject){
-// 		$.ajax({
-// 	    url: movieConfig.getMovieURL().url,
-// 	    type: 'GET',
-// 	    data: {t: movieTitle, y: movieYear, tomatoes: true},
-// 	    success: resolve()
-// 		});
-// 	});
-// }
+module.exports = {pullMovieByTitle, parseMovies};
+},{"./movie-getter.js":8}],10:[function(require,module,exports){
+// This file builds the DOM elements for the wrapper section of index.html.
+"use strict";
+
+// let $ = require ("../lib/node_modules/jquery/dist/jquery.min.js");
+    
+
+//puts cards on the DOM takes ad array of objects (movies)
+function printCards(movies) {
+
+    return new Promise((resolve, reject)=>{
+
+        $(".container").html("");
+
+        let cards = "", 
+            counter = 0;
+
+            movies.forEach(movie => {
+
+            if(movie.poster !== null) {
+
+            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked">
+                        <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
+                        <div class="caption">
+                            <h3>${movie.title}</h3>
+                            <button type="button" class="btn btn-default add-to-watchlist">Add to Watchlist</button>
+                            <div class="rating">
+                            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+                            </div>
+                        </div>
+                      </div>`;
+
+            counter++;
+//every three cards, make a section and prepend it to the container.                                    
+            if (counter % 3 === 0) {
+            var rowCount = 1;
+            $(".container").append(`<section class="row">${cards}</section>`);
+            rowCount ++;
+            cards = ""; 
+           }
+        }
+    }); //end forEach   
+
+  });//end promise
+}//end printCards
 
 
+module.exports = {printCards};
 
 
-module.exports = {pullMovieByTitle};
-},{"./movieConfig.js":9}],11:[function(require,module,exports){
+// 'use strict';
+
+// let cardMovieTemplate = function(movie, userId) {
+//     return new Promise(function(resolve, reject) {
+//         let cardItems = {
+//             image: movie.poster_path,
+//             title: movie.title,
+//             year: movie.release_date.slice(0, 4),
+//             // myRatings: userId ? `${movie.ratings}` : `${movie.popularity}`
+//         };
+//         let cardTemplate = `<div class="row">
+//                                 <div class="col-sm-6 col-md-4">
+//                                     <div class="thumbnail">
+//                                         <img src="https://image.tmdb.org/t/p/w500${cardItems.image}" alt="Movie image ${cardItems.title}">
+//                                         <div class="caption">
+//                                             <h3>${cardItems.title}</h3>
+//                                             <p>${cardItems.year}</p>
+//                                             <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+//                                         </div>
+//                                     </div>
+//                                 </div>
+//                             </div>`;
+//         resolve(cardTemplate);
+//         reject();
+//     });
+// };
+
+// module.exports = cardMovieTemplate;
+},{}],11:[function(require,module,exports){
 (function (global){
 var firebase = (function(){
 /*! @license Firebase v3.6.9
