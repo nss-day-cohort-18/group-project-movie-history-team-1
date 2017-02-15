@@ -33,9 +33,9 @@
                     <button type="button" class="btn form-control-btn btn-default">Submit</button>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="login"><a href="#">Login</a></li>
-                    <li class="register"><a href="#">Register</a></li>
-                    <li class="logout"><a href="#">Logout</a></li>
+                    <li id="login"><a href="#">Login</a></li>
+                    <li id="register" class="register"><a href="#">Register</a></li>
+                    <li id="logout" class="hidden"><a href="#">Logout</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -44,10 +44,10 @@
 
 <div class="filter-group">
     <div class="btn-group" role="group" aria-label="...">
-        <button type="button" class="btn btn-default filter-checked">Untracked</button>
-        <button type="button" class="btn btn-default">Unwatched</button>
-        <button type="button" class="btn btn-default">Watched</button>
-        <button type="button" class="btn btn-default">Favorites</button>
+        <button type="button" class="btn btn-default filter-checked" value="untracked">Untracked</button>
+        <button type="button" class="btn btn-default" value="unwatched">Unwatched</button>
+        <button type="button" class="btn btn-default" value="watched">Watched</button>
+        <button type="button" class="btn btn-default" value="favorites">Favorites</button>
     </div>
 </div>
 
