@@ -22,18 +22,22 @@ module.exports = firebase;
 "use strict";
 let firebase = require("./configFirebase"),
 	provider = new firebase.auth.GoogleAuthProvider(),
-	currentUser = null;
+	currentUser = null,
+	email = $('#userEmail'),
+	password = $('#userPass');
 
-firebase.auth().onAuthStateChanged( (user) => {
-	if (user) {
-		console.log("Current user logged in: ", currentUser);
+firebase.auth().onAuthStateChanged(function(user){
+	if (user){
 		currentUser = user.uid;
+		console.log("currentUser logged in", currentUser);
+		$("#login").addClass("hidden");
+		$("#logout").removeClass("hidden");
+
 	} else {
 		currentUser = null;
-		console.log("User is not logged in");
+		console.log("currentUser not logged in");
 	}
 });
-
 
 function logInGoogle() {
 	return firebase.auth().signInWithPopup(provider);
@@ -41,14 +45,37 @@ function logInGoogle() {
 function logOut() {
 	return firebase.auth().signOut();
 }
-function getUser() {
-	return currentUser;
-}
-function setUser(val) {
-	currentUser = val;
-}
+  	
+// firebase.auth().createUserWithEmailAndPassword(email.val(), pass.val()).then(function(user){
+//     console.log("everything went fine");
+//     console.log("user object:" + user);
+//     // can save the user data here.
+// }).catch(function(error) {
+//     console.log("there was an error");
+//     var errorCode = error.code;
+//     var errorMessage = error.message;
+//     console.log(errorCode + ' - ' + errorMessage);
+// });
 
-module.exports = {logInGoogle, logOut, getUser, setUser};
+// } else {
+//     console.log("fill in both fields");
+// }  
+
+// function getUser() {
+// 	return currentUser;
+// }
+// function setUser(val) {
+// 	currentUser = val;
+// }
+
+firebase.auth().signOut().then(function() {
+  // Sign-out successful.
+}, function(error) {
+  // An error happened.
+});
+
+// getUser, setUser
+module.exports = {logInGoogle, logOut};
 
 },{"./configFirebase":1}],3:[function(require,module,exports){
 "use strict";
@@ -118,7 +145,22 @@ function addMovie(movieObj) {
 	});
 }
 
-module.exports = addMovie;
+function addMovies(moviesArray){
+	console.log('calling to firebase');
+	 return new Promise( function (resolve, reject){
+		$.ajax({
+			url: `https://group-project-b2ed0.firebaseio.com/movies.json`,
+			type: 'POST',
+			data: JSON.stringify(moviesArray),
+			dataType: 'json'
+		}).done( function(){
+			console.log('posted');
+			resolve(moviesArray);
+		});
+	});
+}
+
+module.exports = {addMovie, addMovies};
 },{"./configFirebase":1}],7:[function(require,module,exports){
 "use strict";
 
@@ -169,42 +211,37 @@ let config = require('./firebase-js/configFirebase.js'),
 /*==================LOGIN=====================*/
 /*============================================*/
 
-/* 
-
-This function looks to firebase to check email/username and password 
-for member login, then opens the user main page.
-*/
-
-$('.login-submit').click(function(event) {
-	let userEmailUserName = $('.user-email'),
-		userPassword = $('.user-password');
-	readFirebase.checkForUser(userEmailUserName, userPassword);
+ //login
+$("#login").click(()=>{
+	console.log('you clicked login');
+	createUser.logInGoogle();  
 });
 
-
-/*
-
-This function brings up a form to allow you to sign up as a user for our application.
-*/
-
-$('.sign-up').click(function(event) {
-	createUser.newUser();
+//logout
+$("#logout").click(()=>{
+	console.log('you clicked logout');
+	createUser.logOut();
+	$("#logout").addClass("hidden");
+    $("#login").removeClass("hidden");
 });
 
+//register
+// $("#register").click(()=>{
+// 	console.log("youclickedregister");
+// 	if(email.val() && password.val()){
+// 	createUser.setUser();
+// 	}
+// });
 
-/*
-
-Sends you to the main movie-listing page without signup
-*/
-
-$('.browse-movies').click(function(event) {
-	movieLoad.movieAPI().then(
-		() => {
-			$('.login').addClass('hidden');
-			$('.visitor').removeClass('hidden');
-		}
-	);
-});
+//Sends you to the main movie-listing page without signup
+// $('.browse-movies').click(function(event) {
+// 	movieLoad.movieAPI().then(
+// 		() => {
+// 			$('.login').addClass('hidden');
+// 			$('.visitor').removeClass('hidden');
+// 		}
+// 	);
+// });
 
 
 
@@ -253,17 +290,18 @@ Function that filters the user page. The filters include:
 
 $('.btn-group').click(function(event) {
 	let buttonValue = $(event.target).val();
+	$(".card").addClass("hidden");
 	switch (buttonValue) {
 		case "untracked": 
+			$('.untracked').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 		case "unwatched": 
+			$('.unwatched').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 		case "watched": 
-			console.log(buttonValue);
-			break;
-		case "favorites": 
+			$('.watched').removeClass("hidden");
 			console.log(buttonValue);
 			break;
 	}
@@ -275,36 +313,22 @@ $('.btn-group').click(function(event) {
 Function that checks OMDb and our firebase database for specific keywords
 to search movies with the search input.
 */
-// let formControl = (submitValue) => {
-	
-	
-// 	}
-	//go to firebase to search related movies
-	// readFirebase.readMovies();
-	//also go to movie load to compare movies with the api call
-
-// 	if (keyWordValues.length === 0) {
-// 		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
-// 	} else {
-// 		if (yearValues.length === 0) {
-// 			console.log(movieLoad.pullMovieByTitle(submitValue));
-// 		} else {
-// 			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
-// 		}
-// 	}
-// };
 
 $('.form-control').keyup(function(event) {
     	if(event.which == 13) {
-    		// $('.card').remove();
-        	console.log('this.value line 180:', $(this).val());
+        	// console.log('this.value line 180:', $(this).val());
         	movieLoad.pullMovieByTitle($(this).val())
 			.then((movieData)=>{
-			console.log('movieData passed to parse:', movieData);
+			// console.log('movieData passed to parse:', movieData);
 			 movieLoad.parseMovies(movieData)
 			 .then((moviesArray)=>{
-			 $(".form-control").html("");
+			 //add to firbase as untracked
+			 updateUser.addMovies(moviesArray)
+			 .then((moviesArray)=>{
+			 	$(".form-control").html("");
 			 printer.printCards(moviesArray);
+			 });
+			 
 		});
      });
    }
@@ -316,8 +340,10 @@ This function adds movies dto the user's watched-list within firebase and change
 watched boolean value to false. It also adds the movie to the user's movie list.
 */
 
-$('.card').click(function(event) {
-	if (event.target.hasClass('watchlist')) {
+$(document).on('click', '.card', function(event) {
+	console.log('event.target:', event.target);
+	if (event.target.hasClass('add-to-watchlist')) {
+		console.log('clicked on watchlist');
 		//unwatched is a sass comp that removes hidden from the star-rating
 		//as well at the delete movie button.
 		$(this).addClass('.unwatched');
@@ -447,7 +473,8 @@ function parseMovies(movieData) {
 			moviesObject = {
 				poster : movie.poster_path,
 				title : movie.title,
-				id : movie.id
+				id : movie.id,
+				untracked: true
 		};
 		moviesArray.push(moviesObject);
 	});
@@ -478,7 +505,7 @@ function printCards(movies) {
 
             if(movie.poster !== null) {
 
-            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked">
+            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card">
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
                         <div class="caption">
                             <h3>${movie.title}</h3>
