@@ -197,6 +197,7 @@ $('.form-control').keyup(function(event) {
 			 .then((moviesArray)=>{
 			 	$(".form-control").html("");
 			 	printer.printCards(moviesArray);
+			 	clickRegister();
 			 });
 			 
 		});
