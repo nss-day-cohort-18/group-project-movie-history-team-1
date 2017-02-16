@@ -1,9 +1,7 @@
 "use strict";
 let firebase = require("./configFirebase"),
 	provider = new firebase.auth.GoogleAuthProvider(),
-	currentUser = null,
-	email = $('#userEmail'),
-	password = $('#userPass');
+	currentUser = null;
 
 firebase.auth().onAuthStateChanged(function(user){
 	if (user){
@@ -24,34 +22,12 @@ function logInGoogle() {
 function logOut() {
 	return firebase.auth().signOut();
 }
-  	
-firebase.auth().createUserWithEmailAndPassword(email.val(), pass.val()).then(function(user){
-    console.log("everything went fine");
-    console.log("user object:" + user);
-    // can save the user data here.
-}).catch(function(error) {
-    console.log("there was an error");
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    console.log(errorCode + ' - ' + errorMessage);
-});
-
-} else {
-    console.log("fill in both fields");
-}  
-
-// function getUser() {
-// 	return currentUser;
-// }
-// function setUser(val) {
-// 	currentUser = val;
-// }
-
-firebase.auth().signOut().then(function() {
-  // Sign-out successful.
-}, function(error) {
-  // An error happened.
-});
-
+ 
+function getUser() {
+	return currentUser;
+}
+function setUser(val) {
+	currentUser = val;
+}
 
 module.exports = {logInGoogle, logOut, getUser, setUser};
