@@ -17,10 +17,11 @@ return new Promise( function(resolve, reject){
 	});
 }
 
+let moviesArray = [];
+
 function parseMovies(movieData) {
 	return new Promise((resolve, reject)=>{
-	let moviesArray = [],
-		moviesObject = {},
+	let moviesObject = {},
 		results = movieData.results;
 		results.forEach((movie)=> {
 			moviesObject = {
@@ -40,4 +41,8 @@ function parseMovies(movieData) {
 	});
 }
 
-module.exports = {pullMovieByTitle, parseMovies};
+function getMoviesArray(){
+	return moviesArray;
+}
+
+module.exports = {pullMovieByTitle, parseMovies, getMoviesArray};

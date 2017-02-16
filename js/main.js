@@ -171,20 +171,6 @@ to search movies with the search input.
 
 $('.form-control').keyup(function(event) {
   
-	if(event.which == 13) {
-    	console.log('this.value line 180:', $(this).val());
-    	movieLoad.pullMovieByTitle($(this).val())
-		.then((movieData)=>{
-			console.log('movieData passed to parse:', movieData);
-			movieLoad.parseMovies(movieData)
-			.then((moviesArray)=>{
-				$(".form-control").html("");
-				printer.printCards(moviesArray);
-				clickRegister();
-			});
-		 });
-	}
-
     	if(event.which == 13) {
         	// console.log('this.value line 180:', $(this).val());
         	movieLoad.pullMovieByTitle($(this).val())
@@ -197,7 +183,7 @@ $('.form-control').keyup(function(event) {
 			 .then((moviesArray)=>{
 			 	$(".form-control").html("");
 			 	printer.printCards(moviesArray);
-			 	clickRegister();
+			 	clickRegister();//puts the listener on the button
 			 });
 			 
 		});
@@ -217,27 +203,20 @@ function clickRegister() {
 	$(".add-to-watchlist").click(function(event) {
 		console.log("you clicked addtowatchlist");
 		$(this).closest(".card").addClass("unwatched").removeClass("untracked");
-		//db call
+		console.log('this', $(this));
+		let movieId = $(this).attr("id");
+		let userID = $(this).closest(".card").attr("id");
+		console.log('userID to send:', userID);
+
+		let thisArray = movieLoad.getMoviesArray();
+		console.log('thisArray:', thisArray);
+		let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
+		console.log('movieTarget should be false:', movieTarget);
+		 movieTarget[0].watchlist = true;
+		console.log('movieTarget:', movieTarget);
+		updateUser.addMovie(movieTarget[0]);
 	});
 }
-
-
-$(document).on('click', '.card', function(event) {
-	console.log('event.target:', event.target);
-	if (event.target.hasClass('add-to-watchlist')) {
-		console.log('clicked on watchlist');
-		//unwatched is a sass comp that removes hidden from the star-rating
-		//as well at the delete movie button.
-		$(this).addClass('.unwatched');
-		//takes the card id and sorts it through the dom-array
-		updateUser.sortMovie(event.target.id).then(
-			//sortMovie() brings back a movie obj  to be sent to firebase for the 
-			//user's movie-list
-			(movieObj) => updateUser.updateFirebase(movieObj)
-		);
-	}
-});
-
 
 /*
 

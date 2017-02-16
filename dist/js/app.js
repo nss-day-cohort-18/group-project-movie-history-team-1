@@ -44,12 +44,14 @@ function logOut() {
 	return firebase.auth().signOut();
 } 
 
- function getUser() {
- 	return currentUser;
- }
- function setUser(val) {
- 	currentUser = val;
- }
+function getUser() {
+	return currentUser;
+}
+function setUser(val) {
+	currentUser = val;
+}
+
+
 
 firebase.auth().signOut().then(function() {
   // Sign-out successful.
@@ -57,8 +59,9 @@ firebase.auth().signOut().then(function() {
   // An error happened.
 });
 
-// getUser, setUser
-module.exports = {logInGoogle, logOut, getUser};
+//
+module.exports = {logInGoogle, logOut, getUser, setUser};
+
 
 },{"./configFirebase":1}],3:[function(require,module,exports){
 "use strict";
@@ -127,6 +130,20 @@ function addMovie(movieObj) {
 		});
 	});
 }
+
+// function getMovie(id){
+
+// 	return new Promise( function (resolve, reject){
+// 		$.ajax({
+// 			url: `https://group-project-b2ed0.firebaseio.com/movies.json`,
+// 			type: 'GET',
+// 			data: JSON.stringify(movieObj),
+// 			dataType: 'json'
+// 		}).done( function(){
+// 			resolve();
+// 		});
+// 	});
+// }
 
 function addMovies(moviesArray){
 	console.log('calling to firebase');
@@ -208,13 +225,6 @@ $("#logout").click(()=>{
     $("#login").removeClass("hidden");
 });
 
-//register
-// $("#register").click(()=>{
-// 	console.log("youclickedregister");
-// 	if(email.val() && password.val()){
-// 	createUser.setUser();
-// 	}
-// });
 
 //Sends you to the main movie-listing page without signup
 // $('.browse-movies').click(function(event) {
@@ -271,25 +281,51 @@ Function that filters the user page. The filters include:
 	3. All Movieas
 */
 
+/* The function filters by adding and removing a class that hides the irrelevant cards
+*/
+
 $('.btn-group').click(function(event) {
 	let buttonValue = $(event.target).val();
 	$(".card").addClass("hidden");
+	$('.searchView').html("Movie History >");
 	switch (buttonValue) {
 		case "untracked": 
 			$('.untracked').removeClass("hidden");
+			$('.searchView').html("Movie History > Untracked");
 			console.log(buttonValue);
 			break;
 		case "unwatched": 
 			$('.unwatched').removeClass("hidden");
+			$('.searchView').html("Movie History > Unwatched");
 			console.log(buttonValue);
 			break;
 		case "watched": 
 			$('.watched').removeClass("hidden");
+			$('.searchView').html("Movie History > Watched");
 			console.log(buttonValue);
 			break;
 	}
 });
 
+$("#slider").change((event)=>{
+	console.log($("#slider").val()); //this line will be replaced with a function that filters movies by rating
+});
+
+/* Star Rating via rateYo
+See http://rateyo.fundoocode.ninja/# */
+$(function () {
+ 
+  $("#rateYo").rateYo({
+    rating: 0,
+    maxValue: 10,
+    numStars: 10,
+    fullStar: true,
+    onSet: function(rating, rateYoInstance){
+    	console.log(rating);// This is where we will insert the function to attach rating values to movies
+    }
+  });
+ 
+});
 
 /* 
 
@@ -298,6 +334,7 @@ to search movies with the search input.
 */
 
 $('.form-control').keyup(function(event) {
+  
     	if(event.which == 13) {
         	// console.log('this.value line 180:', $(this).val());
         	movieLoad.pullMovieByTitle($(this).val())
@@ -310,35 +347,40 @@ $('.form-control').keyup(function(event) {
 			 .then((moviesArray)=>{
 			 	$(".form-control").html("");
 			 	printer.printCards(moviesArray);
+			 	clickRegister();//puts the listener on the button
 			 });
 			 
 		});
      });
    }
-});
 
+});
+//need to attach user id variable here
 /* 
 
-This function adds movies dto the user's watched-list within firebase and changes the 
+This function adds movies to the user's watched-list within firebase and changes the 
 watched boolean value to false. It also adds the movie to the user's movie list.
 */
 
-$(document).on('click', '.card', function(event) {
-	console.log('event.target:', event.target);
-	if (event.target.hasClass('add-to-watchlist')) {
-		console.log('clicked on watchlist');
-		//unwatched is a sass comp that removes hidden from the star-rating
-		//as well at the delete movie button.
-		$(this).addClass('.unwatched');
-		//takes the card id and sorts it through the dom-array
-		updateUser.sortMovie(event.target.id).then(
-			//sortMovie() brings back a movie obj  to be sent to firebase for the 
-			//user's movie-list
-			(movieObj) => updateUser.updateFirebase(movieObj)
-		);
-	}
-});
+//instead of calling function could use jquery live: $(".add-to-watchlist").live('click', function(event)
+function clickRegister() {
+	$(".add-to-watchlist").click(function(event) {
+		console.log("you clicked addtowatchlist");
+		$(this).closest(".card").addClass("unwatched").removeClass("untracked");
+		console.log('this', $(this));
+		let movieId = $(this).attr("id");
+		let userID = $(this).closest(".card").attr("id");
+		console.log('userID to send:', userID);
 
+		let thisArray = movieLoad.getMoviesArray();
+		console.log('thisArray:', thisArray);
+		let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
+		console.log('movieTarget should be false:', movieTarget);
+		 movieTarget[0].watchlist = true;
+		console.log('movieTarget:', movieTarget);
+		updateUser.addMovie(movieTarget[0]);
+	});
+}
 
 /*
 
@@ -448,10 +490,11 @@ return new Promise( function(resolve, reject){
 	});
 }
 
+let moviesArray = [];
+
 function parseMovies(movieData) {
 	return new Promise((resolve, reject)=>{
-	let moviesArray = [],
-		moviesObject = {},
+	let moviesObject = {},
 		results = movieData.results;
 		results.forEach((movie)=> {
 			moviesObject = {
@@ -471,7 +514,11 @@ function parseMovies(movieData) {
 	});
 }
 
-module.exports = {pullMovieByTitle, parseMovies};
+function getMoviesArray(){
+	return moviesArray;
+}
+
+module.exports = {pullMovieByTitle, parseMovies, getMoviesArray};
 },{"../firebase-js/createUser.js":2,"./movie-getter.js":8}],10:[function(require,module,exports){
 // This file builds the DOM elements for the wrapper section of index.html.
 "use strict";
@@ -483,7 +530,7 @@ module.exports = {pullMovieByTitle, parseMovies};
 function printCards(movies) {
 
     return new Promise((resolve, reject)=>{
-
+        //dont need this promise bc synchronous
         $(".container").html("");
 
         let cards = "", 
@@ -493,11 +540,12 @@ function printCards(movies) {
 
             if(movie.poster !== null) {
 
-            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card">
+            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card" id="${movie.user}">
+
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
                         <div class="caption">
                             <h3>${movie.title}</h3>
-                            <button type="button" class="btn btn-default add-to-watchlist">Add to Watchlist</button>
+                            <button type="button" class="btn btn-default add-to-watchlist" id="${movie.id}">Add to Watchlist</button>
                             <div class="rating">
                             <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
                             </div>
