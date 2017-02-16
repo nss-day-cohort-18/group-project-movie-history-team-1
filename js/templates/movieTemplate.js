@@ -18,12 +18,12 @@ function printCards(movies) {
 
             if(movie.poster !== null) {
 
-            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card">
+            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card" id="${movie.user}">
 
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
                         <div class="caption">
                             <h3>${movie.title}</h3>
-                            <button type="button" class="btn btn-default add-to-watchlist">Add to Watchlist</button>
+                            <button type="button" class="btn btn-default add-to-watchlist" id="${movie.id}">Add to Watchlist</button>
                             <div class="rating">
                             <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
                             </div>

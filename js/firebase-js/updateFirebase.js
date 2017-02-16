@@ -16,6 +16,20 @@ function addMovie(movieObj) {
 	});
 }
 
+// function getMovie(id){
+
+// 	return new Promise( function (resolve, reject){
+// 		$.ajax({
+// 			url: `https://group-project-b2ed0.firebaseio.com/movies.json`,
+// 			type: 'GET',
+// 			data: JSON.stringify(movieObj),
+// 			dataType: 'json'
+// 		}).done( function(){
+// 			resolve();
+// 		});
+// 	});
+// }
+
 function addMovies(moviesArray){
 	console.log('calling to firebase');
 	 return new Promise( function (resolve, reject){
