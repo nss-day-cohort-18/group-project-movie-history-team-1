@@ -61,16 +61,6 @@ $("#logout").click(()=>{
     $("#login").removeClass("hidden");
 });
 
-//register
-$("#register").click(()=>{
-	var email;
-	var password;
-	console.log("youclickedregister");
-	console.log(email.val());
-	if (email.val() && password.val()){
-	
-	}
-});
 
 //Sends you to the main movie-listing page without signup
 // $('.browse-movies').click(function(event) {
@@ -152,26 +142,9 @@ $('.btn-group').click(function(event) {
 Function that checks OMDb and our firebase database for specific keywords
 to search movies with the search input.
 */
-// let formControl = (submitValue) => {
-	
-	
-// 	}
-	//go to firebase to search related movies
-	// readFirebase.readMovies();
-	//also go to movie load to compare movies with the api call
-
-// 	if (keyWordValues.length === 0) {
-// 		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
-// 	} else {
-// 		if (yearValues.length === 0) {
-// 			console.log(movieLoad.pullMovieByTitle(submitValue));
-// 		} else {
-// 			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
-// 		}
-// 	}
-// };
 
 $('.form-control').keyup(function(event) {
+  
 	if(event.which == 13) {
     	console.log('this.value line 180:', $(this).val());
     	movieLoad.pullMovieByTitle($(this).val())
@@ -185,6 +158,25 @@ $('.form-control').keyup(function(event) {
 			});
 		 });
 	}
+
+    	if(event.which == 13) {
+        	// console.log('this.value line 180:', $(this).val());
+        	movieLoad.pullMovieByTitle($(this).val())
+			.then((movieData)=>{
+			// console.log('movieData passed to parse:', movieData);
+			 movieLoad.parseMovies(movieData)
+			 .then((moviesArray)=>{
+			 //add to firbase as untracked
+			 updateUser.addMovies(moviesArray)
+			 .then((moviesArray)=>{
+			 	$(".form-control").html("");
+			 printer.printCards(moviesArray);
+			 });
+			 
+		});
+     });
+   }
+
 });
 //need to attach user id variable here
 /* 
@@ -192,6 +184,7 @@ $('.form-control').keyup(function(event) {
 This function adds movies to the user's watched-list within firebase and changes the 
 watched boolean value to false. It also adds the movie to the user's movie list.
 */
+
 //instead of calling function could use jquery live: $(".add-to-watchlist").live('click', function(event)
 function clickRegister() {
 	$(".add-to-watchlist").click(function(event) {
@@ -200,6 +193,24 @@ function clickRegister() {
 		//db call
 	});
 }
+
+
+$(document).on('click', '.card', function(event) {
+	console.log('event.target:', event.target);
+	if (event.target.hasClass('add-to-watchlist')) {
+		console.log('clicked on watchlist');
+		//unwatched is a sass comp that removes hidden from the star-rating
+		//as well at the delete movie button.
+		$(this).addClass('.unwatched');
+		//takes the card id and sorts it through the dom-array
+		updateUser.sortMovie(event.target.id).then(
+			//sortMovie() brings back a movie obj  to be sent to firebase for the 
+			//user's movie-list
+			(movieObj) => updateUser.updateFirebase(movieObj)
+		);
+	}
+});
+
 
 /*
 

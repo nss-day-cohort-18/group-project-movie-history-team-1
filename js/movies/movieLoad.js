@@ -25,7 +25,8 @@ function parseMovies(movieData) {
 			moviesObject = {
 				poster : movie.poster_path,
 				title : movie.title,
-				id : movie.id
+				id : movie.id,
+				untracked: true
 		};
 		moviesArray.push(moviesObject);
 	});
