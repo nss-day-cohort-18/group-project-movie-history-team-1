@@ -147,21 +147,7 @@ $("#slider").change((event)=>{
 	console.log($("#slider").val()); //this line will be replaced with a function that filters movies by rating
 });
 
-/* Star Rating via rateYo
-See http://rateyo.fundoocode.ninja/# */
-$(function () {
- 
-  $("#rateYo").rateYo({
-    rating: 0,
-    maxValue: 10,
-    numStars: 10,
-    fullStar: true,
-    onSet: function(rating, rateYoInstance){
-    	console.log(rating);// This is where we will insert the function to attach rating values to movies
-    }
-  });
- 
-});
+
 
 /* 
 
@@ -224,26 +210,26 @@ Changes the card's watch to true. Also includes sass comp that
 changes the background-color and star-rating to whatever the user chooses
 */
 
-$('.star-rating').change(function(event) {
-	$(this).parent('.movie').addClass('watched');
-	let watch = true;
-	let targetVal = parseInt($(event.target).val());
-	let ratingType = null;
-	let determineValue = () => {
-		if (targetVal > 0 && targetVal <= 3) {
-			ratingType = "low";
-		} else if (targetVal > 3 && targetVal <= 6) {
-			ratingType = "midrange";
-		} else if (targetVal > 6 && targetVal <= 9) {
-			ratingType = "highrange";
-		} else {
-			ratingType = "favourite";
-		}
-	};
-	determineValue().then(
-		updateUser.changeToWatched(watch, targetVal, ratingType)
-	);
-});
+// $('.star-rating').change(function(event) {
+// 	$(this).parent('.movie').addClass('watched');
+// 	let watch = true;
+// 	let targetVal = parseInt($(event.target).val());
+// 	let ratingType = null;
+// 	let determineValue = () => {
+// 		if (targetVal > 0 && targetVal <= 3) {
+// 			ratingType = "low";
+// 		} else if (targetVal > 3 && targetVal <= 6) {
+// 			ratingType = "midrange";
+// 		} else if (targetVal > 6 && targetVal <= 9) {
+// 			ratingType = "highrange";
+// 		} else {
+// 			ratingType = "favourite";
+// 		}
+// 	};
+// 	determineValue().then(
+// 		updateUser.changeToWatched(watch, targetVal, ratingType)
+// 	);
+// });
 
 
 /*
