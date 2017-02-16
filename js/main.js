@@ -61,13 +61,6 @@ $("#logout").click(()=>{
     $("#login").removeClass("hidden");
 });
 
-//register
-// $("#register").click(()=>{
-// 	console.log("youclickedregister");
-// 	if(email.val() && password.val()){
-// 	createUser.setUser();
-// 	}
-// });
 
 //Sends you to the main movie-listing page without signup
 // $('.browse-movies').click(function(event) {
@@ -151,6 +144,21 @@ to search movies with the search input.
 */
 
 $('.form-control').keyup(function(event) {
+  
+	if(event.which == 13) {
+    	console.log('this.value line 180:', $(this).val());
+    	movieLoad.pullMovieByTitle($(this).val())
+		.then((movieData)=>{
+			console.log('movieData passed to parse:', movieData);
+			movieLoad.parseMovies(movieData)
+			.then((moviesArray)=>{
+				$(".form-control").html("");
+				printer.printCards(moviesArray);
+				clickRegister();
+			});
+		 });
+	}
+
     	if(event.which == 13) {
         	// console.log('this.value line 180:', $(this).val());
         	movieLoad.pullMovieByTitle($(this).val())
@@ -168,13 +176,24 @@ $('.form-control').keyup(function(event) {
 		});
      });
    }
-});
 
+});
+//need to attach user id variable here
 /* 
 
-This function adds movies dto the user's watched-list within firebase and changes the 
+This function adds movies to the user's watched-list within firebase and changes the 
 watched boolean value to false. It also adds the movie to the user's movie list.
 */
+
+//instead of calling function could use jquery live: $(".add-to-watchlist").live('click', function(event)
+function clickRegister() {
+	$(".add-to-watchlist").click(function(event) {
+		console.log("you clicked addtowatchlist");
+		$(this).closest(".card").addClass("unwatched").removeClass("untracked");
+		//db call
+	});
+}
+
 
 $(document).on('click', '.card', function(event) {
 	console.log('event.target:', event.target);

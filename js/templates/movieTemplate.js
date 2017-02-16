@@ -8,7 +8,7 @@
 function printCards(movies) {
 
     return new Promise((resolve, reject)=>{
-
+        //dont need this promise bc synchronous
         $(".container").html("");
 
         let cards = "", 
@@ -18,7 +18,10 @@ function printCards(movies) {
 
             if(movie.poster !== null) {
 
+            cards += `<div class="thumbnail col-sm-6 col-md-4 card untracked">
+
             cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card">
+
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
                         <div class="caption">
                             <h3>${movie.title}</h3>
