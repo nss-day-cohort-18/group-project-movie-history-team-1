@@ -21,7 +21,7 @@ function logInGoogle() {
 }
 function logOut() {
 	return firebase.auth().signOut();
-}
+} 
 
 function getUser() {
 	return currentUser;
@@ -30,14 +30,7 @@ function setUser(val) {
 	currentUser = val;
 }
 
-module.exports = {logInGoogle, logOut, getUser, setUser};
-  	
-function getUser() {
-	return currentUser;
-}
-function setUser(val) {
-	currentUser = val;
-}
+
 
 firebase.auth().signOut().then(function() {
   // Sign-out successful.
@@ -45,5 +38,6 @@ firebase.auth().signOut().then(function() {
   // An error happened.
 });
 
-// getUser, setUser
-module.exports = {logInGoogle, logOut};
+//
+module.exports = {logInGoogle, logOut, getUser, setUser};
+

@@ -170,7 +170,7 @@ $('.form-control').keyup(function(event) {
 			 updateUser.addMovies(moviesArray)
 			 .then((moviesArray)=>{
 			 	$(".form-control").html("");
-			 printer.printCards(moviesArray);
+			 	printer.printCards(moviesArray);
 			 });
 			 
 		});
