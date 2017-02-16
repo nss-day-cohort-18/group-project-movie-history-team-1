@@ -25,20 +25,20 @@ function logOut() {
 	return firebase.auth().signOut();
 }
   	
-firebase.auth().createUserWithEmailAndPassword(email.val(), pass.val()).then(function(user){
-    console.log("everything went fine");
-    console.log("user object:" + user);
-    // can save the user data here.
-}).catch(function(error) {
-    console.log("there was an error");
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    console.log(errorCode + ' - ' + errorMessage);
-});
+// firebase.auth().createUserWithEmailAndPassword(email.val(), pass.val()).then(function(user){
+//     console.log("everything went fine");
+//     console.log("user object:" + user);
+//     // can save the user data here.
+// }).catch(function(error) {
+//     console.log("there was an error");
+//     var errorCode = error.code;
+//     var errorMessage = error.message;
+//     console.log(errorCode + ' - ' + errorMessage);
+// });
 
-} else {
-    console.log("fill in both fields");
-}  
+// } else {
+//     console.log("fill in both fields");
+// }  
 
 // function getUser() {
 // 	return currentUser;
@@ -53,5 +53,5 @@ firebase.auth().signOut().then(function() {
   // An error happened.
 });
 
-
-module.exports = {logInGoogle, logOut, getUser, setUser};
+// getUser, setUser
+module.exports = {logInGoogle, logOut};
