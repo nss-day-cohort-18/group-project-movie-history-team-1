@@ -117,25 +117,51 @@ Function that filters the user page. The filters include:
 	3. All Movieas
 */
 
+/* The function filters by adding and removing a class that hides the irrelevant cards
+*/
+
 $('.btn-group').click(function(event) {
 	let buttonValue = $(event.target).val();
 	$(".card").addClass("hidden");
+	$('.searchView').html("Movie History >");
 	switch (buttonValue) {
 		case "untracked": 
 			$('.untracked').removeClass("hidden");
+			$('.searchView').html("Movie History > Untracked");
 			console.log(buttonValue);
 			break;
 		case "unwatched": 
 			$('.unwatched').removeClass("hidden");
+			$('.searchView').html("Movie History > Unwatched");
 			console.log(buttonValue);
 			break;
 		case "watched": 
 			$('.watched').removeClass("hidden");
+			$('.searchView').html("Movie History > Watched");
 			console.log(buttonValue);
 			break;
 	}
 });
 
+$("#slider").change((event)=>{
+	console.log($("#slider").val()); //this line will be replaced with a function that filters movies by rating
+});
+
+/* Star Rating via rateYo
+See http://rateyo.fundoocode.ninja/# */
+$(function () {
+ 
+  $("#rateYo").rateYo({
+    rating: 0,
+    maxValue: 10,
+    numStars: 10,
+    fullStar: true,
+    onSet: function(rating, rateYoInstance){
+    	console.log(rating);// This is where we will insert the function to attach rating values to movies
+    }
+  });
+ 
+});
 
 /* 
 

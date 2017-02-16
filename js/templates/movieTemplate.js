@@ -18,8 +18,6 @@ function printCards(movies) {
 
             if(movie.poster !== null) {
 
-            cards += `<div class="thumbnail col-sm-6 col-md-4 card untracked">
-
             cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card">
 
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
