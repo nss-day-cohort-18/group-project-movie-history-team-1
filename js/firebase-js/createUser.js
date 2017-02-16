@@ -23,12 +23,14 @@ function logOut() {
 	return firebase.auth().signOut();
 } 
 
- function getUser() {
- 	return currentUser;
- }
- function setUser(val) {
- 	currentUser = val;
- }
+function getUser() {
+	return currentUser;
+}
+function setUser(val) {
+	currentUser = val;
+}
+
+
 
 firebase.auth().signOut().then(function() {
   // Sign-out successful.
@@ -36,5 +38,6 @@ firebase.auth().signOut().then(function() {
   // An error happened.
 });
 
-// getUser, setUser
-module.exports = {logInGoogle, logOut, getUser};
+//
+module.exports = {logInGoogle, logOut, getUser, setUser};
+
