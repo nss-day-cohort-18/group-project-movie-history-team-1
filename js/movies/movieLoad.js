@@ -1,6 +1,7 @@
 "use strict";
 
-let key = require ("./movie-getter.js");
+let key = require ("./movie-getter.js"),
+	user = require ("../firebase-js/createUser.js");
 	// movieConfig = require("./movieConfig.js");
 
 
@@ -26,7 +27,11 @@ function parseMovies(movieData) {
 				poster : movie.poster_path,
 				title : movie.title,
 				id : movie.id,
-				untracked: true
+				untracked: true,
+				user: user.getUser(),
+				watched: false,
+				watchlist: false,
+				rating: 0
 		};
 		moviesArray.push(moviesObject);
 	});

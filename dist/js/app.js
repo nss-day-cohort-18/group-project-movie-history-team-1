@@ -22,9 +22,7 @@ module.exports = firebase;
 "use strict";
 let firebase = require("./configFirebase"),
 	provider = new firebase.auth.GoogleAuthProvider(),
-	currentUser = null,
-	email = $('#userEmail'),
-	password = $('#userPass');
+	currentUser = null;
 
 firebase.auth().onAuthStateChanged(function(user){
 	if (user){
@@ -44,29 +42,14 @@ function logInGoogle() {
 }
 function logOut() {
 	return firebase.auth().signOut();
-}
-  	
-// firebase.auth().createUserWithEmailAndPassword(email.val(), pass.val()).then(function(user){
-//     console.log("everything went fine");
-//     console.log("user object:" + user);
-//     // can save the user data here.
-// }).catch(function(error) {
-//     console.log("there was an error");
-//     var errorCode = error.code;
-//     var errorMessage = error.message;
-//     console.log(errorCode + ' - ' + errorMessage);
-// });
+} 
 
-// } else {
-//     console.log("fill in both fields");
-// }  
-
-// function getUser() {
-// 	return currentUser;
-// }
-// function setUser(val) {
-// 	currentUser = val;
-// }
+ function getUser() {
+ 	return currentUser;
+ }
+ function setUser(val) {
+ 	currentUser = val;
+ }
 
 firebase.auth().signOut().then(function() {
   // Sign-out successful.
@@ -75,7 +58,7 @@ firebase.auth().signOut().then(function() {
 });
 
 // getUser, setUser
-module.exports = {logInGoogle, logOut};
+module.exports = {logInGoogle, logOut, getUser};
 
 },{"./configFirebase":1}],3:[function(require,module,exports){
 "use strict";
@@ -135,7 +118,7 @@ let firebase = require("./configFirebase");
 function addMovie(movieObj) {
 	return new Promise( function (resolve, reject){
 		$.ajax({
-			url: `https://movie-history-team-team.firebaseio.com/movies.json`,
+			url: `https://group-project-b2ed0.firebaseio.com/movies.json`,
 			type: 'POST',
 			data: JSON.stringify(movieObj),
 			dataType: 'json'
@@ -326,7 +309,7 @@ $('.form-control').keyup(function(event) {
 			 updateUser.addMovies(moviesArray)
 			 .then((moviesArray)=>{
 			 	$(".form-control").html("");
-			 printer.printCards(moviesArray);
+			 	printer.printCards(moviesArray);
 			 });
 			 
 		});
@@ -448,7 +431,8 @@ module.exports = {getKey};
 },{}],9:[function(require,module,exports){
 "use strict";
 
-let key = require ("./movie-getter.js");
+let key = require ("./movie-getter.js"),
+	user = require ("../firebase-js/createUser.js");
 	// movieConfig = require("./movieConfig.js");
 
 
@@ -474,7 +458,11 @@ function parseMovies(movieData) {
 				poster : movie.poster_path,
 				title : movie.title,
 				id : movie.id,
-				untracked: true
+				untracked: true,
+				user: user.getUser(),
+				watched: false,
+				watchlist: false,
+				rating: 0
 		};
 		moviesArray.push(moviesObject);
 	});
@@ -484,7 +472,7 @@ function parseMovies(movieData) {
 }
 
 module.exports = {pullMovieByTitle, parseMovies};
-},{"./movie-getter.js":8}],10:[function(require,module,exports){
+},{"../firebase-js/createUser.js":2,"./movie-getter.js":8}],10:[function(require,module,exports){
 // This file builds the DOM elements for the wrapper section of index.html.
 "use strict";
 
