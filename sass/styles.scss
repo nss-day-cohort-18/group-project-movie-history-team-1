@@ -1,11 +1,11 @@
 html, body {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6, li, ul, a, p {
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 
@@ -29,43 +29,51 @@ h1, h2, h3, h4, h5, h6, li, ul, a, p {
   }
 }
 
-.filter-checked {
-  background-color: cornflowerblue;
-  color: #f2f2f2;
-}
-
 .log-btn {
   font-size: 5em;
 }
 
-// Rating starts
-ul.rating{
-  background:url(../images/star.jpg) bottom;
-  height:21px;
-  width:115px;
-  overflow:hidden;
+// slider
+.sliderContainer label {
+  margin-left: 18%;
 }
 
-ul.rating li{
-  display:inline
+.sliderContainer {
+  width: 28%;
 }
 
-.rating a {
-  display:block;
-  width:23px;
-  height:21px;
-  float:left;
-  text-indent:-9999px;
-  position:relative;
+#slider {
+  margin-left: 18%;
 }
 
-.rating a:hover {
-  background:url(../images/star.jpg) center;
-  width:115px;
-  margin-left:-92px;
-  position:static;
-}
+// // Rating starts
+// ul.rating{
+//   background:url(../images/star.jpg) bottom;
+//   height:21px;
+//   width:115px;
+//   overflow:hidden;
+// }
 
-.rating a:active {
-  background-position:top;
-}
+// ul.rating li{
+//   display:inline
+// }
+
+// .rating a {
+//   display:block;
+//   width:23px;
+//   height:21px;
+//   float:left;
+//   text-indent:-9999px;
+//   position:relative;
+// }
+
+// .rating a:hover {
+//   background:url(../images/star.jpg) center;
+//   width:115px;
+//   margin-left:-92px;
+//   position:static;
+// }
+
+// .rating a:active {
+//   background-position:top;
+// }
