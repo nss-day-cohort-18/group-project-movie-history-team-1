@@ -29,7 +29,7 @@ function parseMovies(movieData) {
 				title : movie.title,
 				id : movie.id,
 				untracked: true,
-				user: user.getUser(),
+				uid: user.getUser(),
 				watched: false,
 				watchlist: false,
 				rating: 0

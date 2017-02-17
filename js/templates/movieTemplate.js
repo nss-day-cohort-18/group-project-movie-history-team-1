@@ -55,12 +55,13 @@ function printCards(movies) {
 
             if(movie.poster !== null) {
 
-            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card" id="${movie.user}">
+            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card" id="${movie.uid}">
 
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
                         <div class="caption">
                             <h3>${movie.title}</h3>
                             <button type="button" class="btn btn-default add-to-watchlist" id="${movie.id}">Add to Watchlist</button>
+                            <button type="button" class="btn btn-default delete" id="${movie.id}">Delete</button>
                             <div class="rateYo" id="${movie.id}">
                             </div>
                         </div>
@@ -82,33 +83,3 @@ function printCards(movies) {
 
 
 module.exports = {printCards};
-
-
-// 'use strict';
-
-// let cardMovieTemplate = function(movie, userId) {
-//     return new Promise(function(resolve, reject) {
-//         let cardItems = {
-//             image: movie.poster_path,
-//             title: movie.title,
-//             year: movie.release_date.slice(0, 4),
-//             // myRatings: userId ? `${movie.ratings}` : `${movie.popularity}`
-//         };
-//         let cardTemplate = `<div class="row">
-//                                 <div class="col-sm-6 col-md-4">
-//                                     <div class="thumbnail">
-//                                         <img src="https://image.tmdb.org/t/p/w500${cardItems.image}" alt="Movie image ${cardItems.title}">
-//                                         <div class="caption">
-//                                             <h3>${cardItems.title}</h3>
-//                                             <p>${cardItems.year}</p>
-//                                             <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                             </div>`;
-//         resolve(cardTemplate);
-//         reject();
-//     });
-// };
-
-// module.exports = cardMovieTemplate;

@@ -69,10 +69,11 @@ module.exports = {logInGoogle, logOut, getUser, setUser};
 let firebase = require("./configFirebase");
 
 //specifying uid to delete from fb
-function deleteMovie(uid) {
+function deleteMovie(deleteKey) {
+console.log('trying to delete this key:', deleteKey);
 	return new Promise( function (resolve, reject){
 		$.ajax({
-			url: `https://movie-history-team-team.firebaseio.com/movies/${uid}.json`,
+			url: `https://group-project-b2ed0.firebaseio.com/${deleteKey}.json`,
 			method: 'DELETE'
 		}).done( function(){
 			resolve();
@@ -80,7 +81,7 @@ function deleteMovie(uid) {
 	});
 }
 
-module.exports = deleteMovie;
+module.exports = {deleteMovie};
 },{"./configFirebase":1}],4:[function(require,module,exports){
 "use strict";
 //private info for my eyes only
@@ -102,14 +103,30 @@ let firebase = require("./configFirebase");
 function getMovies(userID) {
 	return new Promise( function (resolve, reject){
 		$.ajax({
-			url: `https://movie-history-team-team.firebaseio.com/movies.json?orderBy="uid"&equalTo="${userID}"`
-		}).done( function(){
-			resolve();
+			url: `https://group-project-b2ed0.firebaseio.com/movies.json?orderBy="uid"&equalTo="${userID}"`,
+		}).done( function(userMovies){
+			console.log('userMovies:', userMovies);
+			resolve(userMovies);
 		});
 	});
 }
 
-module.exports = getMovies;
+  function parseFireBase(userMovies) {
+
+  		return new Promise(function (resolve, reject){
+		 let idArray = Object.keys(userMovies);
+		 idArray.forEach((movie)=>{
+         userMovies[movie].key = movie;
+         console.log('key:', movie);
+         console.log('userMovies[movie]:', userMovies[movie]);
+         console.log('userMovies[movie].key:', userMovies[movie].key);
+	});
+		 resolve(userMovies);
+  });
+}
+
+
+module.exports = {getMovies, parseFireBase};
 
 
 },{"./configFirebase":1}],6:[function(require,module,exports){
@@ -145,22 +162,22 @@ function addMovie(movieObj) {
 // 	});
 // }
 
-function addMovies(moviesArray){
-	console.log('calling to firebase');
-	 return new Promise( function (resolve, reject){
-		$.ajax({
-			url: `https://group-project-b2ed0.firebaseio.com/movies.json`,
-			type: 'POST',
-			data: JSON.stringify(moviesArray),
-			dataType: 'json'
-		}).done( function(){
-			console.log('posted');
-			resolve(moviesArray);
-		});
-	});
-}
+// function addMovies(moviesArray){
+// 	console.log('calling to firebase');
+// 	 return new Promise( function (resolve, reject){
+// 		$.ajax({
+// 			url: `https://group-project-b2ed0.firebaseio.com/movies.json`,
+// 			type: 'POST',
+// 			data: JSON.stringify(moviesArray),
+// 			dataType: 'json'
+// 		}).done( function(){
+// 			console.log('posted');
+// 			resolve(moviesArray);
+// 		});
+// 	});
+// }
 
-module.exports = {addMovie, addMovies};
+module.exports = {addMovie};
 },{"./configFirebase":1}],7:[function(require,module,exports){
 "use strict";
 
@@ -204,8 +221,6 @@ let config = require('./firebase-js/configFirebase.js'),
 	removeUser = require('./firebase-js/deleteFirebase.js'),
 	movieLoad = require('./movies/movieLoad.js'),
 	printer = require ('./templates/movieTemplate.js');
-// test for api call for movie info
-// console.log("hello?", movieLoad.pullMovieByTitle("rambo"));
 
 /*============================================*/
 /*==================LOGIN=====================*/
@@ -311,22 +326,6 @@ $("#slider").change((event)=>{
 	console.log($("#slider").val()); //this line will be replaced with a function that filters movies by rating
 });
 
-/* Star Rating via rateYo
-See http://rateyo.fundoocode.ninja/# */
-$(function () {
- 
-  $("#rateYo").rateYo({
-    rating: 0,
-    maxValue: 10,
-    numStars: 10,
-    fullStar: true,
-    onSet: function(rating, rateYoInstance){
-    	console.log(rating);// This is where we will insert the function to attach rating values to movies
-    }
-  });
- 
-});
-
 /* 
 
 Function that checks OMDb and our firebase database for specific keywords
@@ -342,16 +341,12 @@ $('.form-control').keyup(function(event) {
 			// console.log('movieData passed to parse:', movieData);
 			 movieLoad.parseMovies(movieData)
 			 .then((moviesArray)=>{
-			 //add to firbase as untracked
-			 updateUser.addMovies(moviesArray)
-			 .then((moviesArray)=>{
 			 	$(".form-control").html("");
 			 	printer.printCards(moviesArray);
 			 	clickRegister();//puts the listener on the button
 			 });
 			 
 		});
-     });
    }
 
 });
@@ -365,49 +360,24 @@ watched boolean value to false. It also adds the movie to the user's movie list.
 //instead of calling function could use jquery live: $(".add-to-watchlist").live('click', function(event)
 function clickRegister() {
 	$(".add-to-watchlist").click(function(event) {
-		console.log("you clicked addtowatchlist");
+		// console.log("you clicked addtowatchlist");
 		$(this).closest(".card").addClass("unwatched").removeClass("untracked");
-		console.log('this', $(this));
+		// console.log('this', $(this));
 		let movieId = $(this).attr("id");
 		let userID = $(this).closest(".card").attr("id");
-		console.log('userID to send:', userID);
+		// console.log('userID to send:', userID);
 
 		let thisArray = movieLoad.getMoviesArray();
-		console.log('thisArray:', thisArray);
-		let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
-		console.log('movieTarget should be false:', movieTarget);
+		// console.log('thisArray:', thisArray);
+		let movieTarget = thisArray.filter((movie)=> movie.uid == userID && movie.id == movieId);
+		 // console.log('movieTarget should be false:', movieTarget);
 		 movieTarget[0].watchlist = true;
+		 movieTarget[0].untracked = false;
+
 		console.log('movieTarget:', movieTarget);
 		updateUser.addMovie(movieTarget[0]);
 	});
 }
-
-/*
-
-Changes the card's watch to true. Also includes sass comp that 
-changes the background-color and star-rating to whatever the user chooses
-*/
-
-$('.star-rating').change(function(event) {
-	$(this).parent('.movie').addClass('watched');
-	let watch = true;
-	let targetVal = parseInt($(event.target).val());
-	let ratingType = null;
-	let determineValue = () => {
-		if (targetVal > 0 && targetVal <= 3) {
-			ratingType = "low";
-		} else if (targetVal > 3 && targetVal <= 6) {
-			ratingType = "midrange";
-		} else if (targetVal > 6 && targetVal <= 9) {
-			ratingType = "highrange";
-		} else {
-			ratingType = "favourite";
-		}
-	};
-	determineValue().then(
-		updateUser.changeToWatched(watch, targetVal, ratingType)
-	);
-});
 
 
 /*
@@ -416,13 +386,33 @@ Listens for a card to be deleted from the movie list
 ONLY AVALABLE WITH THE USER'S WATCHED OR UNWATCHED MOVIES
 */
 
-$('.movie-delete').click(function(event) {
-	let cardMovieId = $(this).parent('.movie-card').id;
-	$(this).parent('.movie-card').remove();
-	removeUser.removeFromLocalArray(cardMovieId).then(
-		(cardMovieObj) => removeUser.removeFromFirebase(cardMovieObj)
-	);
-});
+
+
+$(document).on("click", ".delete", (function(event) {
+	let movieId = $(this).attr("id");
+	console.log('movieId to delete:', movieId);
+	let userID = $(this).closest(".card").attr("id");
+	console.log('userID to send:', userID);
+	// let thisArray = movieLoad.getMoviesArray();
+	// console.log('thisArray:', thisArray);
+	// let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
+	// console.log('movieTarget:', movieTarget); 
+	// let movieObjId = movieTarget[0].id;
+	// console.log('movieObjId:', movieObjId);
+	readFirebase.getMovies(userID)
+	.then((userMovies)=>readFirebase.parseFireBase(userMovies))
+	.then((userMovies)=>{
+		console.log('userMovies line 223:', userMovies);
+
+	 	// let deleteKey = ;
+	 	// removeUser.deleteMovie(deleteKey);
+	});
+
+	// $(this).closest(".card").remove();
+	
+	
+
+}));
 
 
 /*
@@ -502,7 +492,7 @@ function parseMovies(movieData) {
 				title : movie.title,
 				id : movie.id,
 				untracked: true,
-				user: user.getUser(),
+				uid: user.getUser(),
 				watched: false,
 				watchlist: false,
 				rating: 0
@@ -523,11 +513,48 @@ module.exports = {pullMovieByTitle, parseMovies, getMoviesArray};
 // This file builds the DOM elements for the wrapper section of index.html.
 "use strict";
 
+let movieLoad = require("../movies/movieLoad.js"),
+    updateUser = require("../firebase-js/updateFirebase.js");
+
 // let $ = require ("../lib/node_modules/jquery/dist/jquery.min.js");
     
 
 //puts cards on the DOM takes ad array of objects (movies)
 function printCards(movies) {
+
+    /* 
+    Star Rating via rateYo
+    See http://rateyo.fundoocode.ninja/# 
+    */
+    $(function () {
+     
+        $(".rateYo").rateYo({
+            starWidth: "20px",
+            rating: 0,
+            maxValue: 10,
+            numStars: 10,
+            fullStar: true,
+            onSet: (rating, rateYoInstance) => {
+                console.log(rating);
+                $(event.currentTarget).closest(".card").addClass("rated");
+                console.log('current target', $(event.currentTarget));
+                let movieId = $(event.currentTarget).attr("id");
+                let userID = $(event.currentTarget).closest(".card").attr("id");
+                console.log('userID to send:', userID);
+
+                let thisArray = movieLoad.getMoviesArray();
+                console.log('thisArray:', thisArray);
+                let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
+                console.log('movieTarget should be false:', movieTarget);
+                 movieTarget[0].rating = rating;
+                 movieTarget[0].watched = true; 
+                 movieTarget[0].watchlist = false;
+                console.log('movieTarget:', movieTarget);
+                updateUser.addMovie(movieTarget[0]);
+            }
+      });
+     
+    });
 
     return new Promise((resolve, reject)=>{
         //dont need this promise bc synchronous
@@ -540,14 +567,14 @@ function printCards(movies) {
 
             if(movie.poster !== null) {
 
-            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card" id="${movie.user}">
+            cards += `<div class="thumbnail col-sm-6 col-md-4 untracked card" id="${movie.uid}">
 
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster}" alt="...">
                         <div class="caption">
                             <h3>${movie.title}</h3>
                             <button type="button" class="btn btn-default add-to-watchlist" id="${movie.id}">Add to Watchlist</button>
-                            <div class="rating">
-                            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+                            <button type="button" class="btn btn-default delete" id="${movie.id}">Delete</button>
+                            <div class="rateYo" id="${movie.id}">
                             </div>
                         </div>
                       </div>`;
@@ -568,37 +595,7 @@ function printCards(movies) {
 
 
 module.exports = {printCards};
-
-
-// 'use strict';
-
-// let cardMovieTemplate = function(movie, userId) {
-//     return new Promise(function(resolve, reject) {
-//         let cardItems = {
-//             image: movie.poster_path,
-//             title: movie.title,
-//             year: movie.release_date.slice(0, 4),
-//             // myRatings: userId ? `${movie.ratings}` : `${movie.popularity}`
-//         };
-//         let cardTemplate = `<div class="row">
-//                                 <div class="col-sm-6 col-md-4">
-//                                     <div class="thumbnail">
-//                                         <img src="https://image.tmdb.org/t/p/w500${cardItems.image}" alt="Movie image ${cardItems.title}">
-//                                         <div class="caption">
-//                                             <h3>${cardItems.title}</h3>
-//                                             <p>${cardItems.year}</p>
-//                                             <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                             </div>`;
-//         resolve(cardTemplate);
-//         reject();
-//     });
-// };
-
-// module.exports = cardMovieTemplate;
-},{}],11:[function(require,module,exports){
+},{"../firebase-js/updateFirebase.js":6,"../movies/movieLoad.js":9}],11:[function(require,module,exports){
 (function (global){
 var firebase = (function(){
 /*! @license Firebase v3.6.9
