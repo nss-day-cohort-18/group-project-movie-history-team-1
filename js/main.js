@@ -33,57 +33,40 @@ favorite movies. This information includes:
 /*============================================*/
 /*================REQUIRES====================*/
 /*============================================*/
-let config = require('./firebase-js/configFirebase.js');
-let readFirebase = require('./firebase-js/readFirebase.js');
-let createUser = require('./firebase-js/createUser.js');
-let updateUser = require('./firebase-js/updateFirebase.js');
-let removeUser = require('./firebase-js/deleteFirebase.js');
-
-let movieLoad = require('./movies/movieLoad.js');
-
-// test for api call for movie info
-// console.log("hello?", movieLoad.pullMovieByTitle("rambo"));
+let config = require('./firebase-js/configFirebase.js'),
+	readFirebase = require('./firebase-js/readFirebase.js'),
+	createUser = require('./firebase-js/createUser.js'),
+	updateUser = require('./firebase-js/updateFirebase.js'),
+	removeUser = require('./firebase-js/deleteFirebase.js'),
+	movieLoad = require('./movies/movieLoad.js'),
+	printer = require ('./templates/movieTemplate.js');
 
 /*============================================*/
 /*==================LOGIN=====================*/
 /*============================================*/
 
-/* 
+$("#login").click(()=>{
+	console.log('you clicked login');
+	createUser.logInGoogle();  
+});
 
-This function looks to firebase to check email/username and password 
-for member login, then opens the user main page.
-*/
-
-$('.login-submit').click(function(event) {
-	let userEmailUserName = $('.user-email'),
-		userPassword = $('.user-password');
-	readFirebase.checkForUser(userEmailUserName, userPassword);
+$("#logout").click(()=>{
+	console.log('you clicked logout');
+	createUser.logOut();
+	$("#logout").addClass("hidden");
+    $("#login").removeClass("hidden");
 });
 
 
-/*
-
-This function brings up a form to allow you to sign up as a user for our application.
-*/
-
-$('.sign-up').click(function(event) {
-	createUser.newUser();
-});
-
-
-/*
-
-Sends you to the main movie-listing page without signup
-*/
-
-$('.browse-movies').click(function(event) {
-	movieLoad.movieAPI().then(
-		() => {
-			$('.login').addClass('hidden');
-			$('.visitor').removeClass('hidden');
-		}
-	);
-});
+//Sends you to the main movie-listing page without signup
+// $('.browse-movies').click(function(event) {
+// 	movieLoad.movieAPI().then(
+// 		() => {
+// 			$('.login').addClass('hidden');
+// 			$('.visitor').removeClass('hidden');
+// 		}
+// 	);
+// });
 
 
 
@@ -130,119 +113,113 @@ Function that filters the user page. The filters include:
 	3. All Movieas
 */
 
+/* The function filters by adding and removing a class that hides the irrelevant cards
+*/
+
 $('.btn-group').click(function(event) {
+	let currentUser = createUser.getUser();
 	let buttonValue = $(event.target).val();
+	let movieDataArray = [];
+	$(".card").addClass("hidden");
+	$('.searchView').html("Movie History >");
 	switch (buttonValue) {
 		case "untracked": 
+			$('.untracked').removeClass("hidden");
+			$('.searchView').html("Movie History > Untracked");
 			console.log(buttonValue);
 			break;
 		case "unwatched": 
+			readFirebase.getMovies(currentUser).then((movieData)=>{
+				for (var movie in movieData){
+					if (movieData[movie].watchlist === true){
+						movieDataArray.push(movieData[movie]);
+					}	
+				}
+				printer.printCards(movieDataArray);	
+			});
+			$('.unwatched').removeClass("hidden");
+			$('.searchView').html("Movie History > Unwatched");
 			console.log(buttonValue);
 			break;
-		case "watched": 
+		case "watched":
+			readFirebase.getMovies(currentUser).then((movieData)=>{
+				console.log("moviedata", movieData);
+				for (var movie in movieData){
+					if (movieData[movie].watched === true){
+						movieDataArray.push(movieData[movie]);
+						console.log("movieDataArray", movieDataArray);
+					}
+				}
+				printer.printCards(movieDataArray);	
+			});
+			$('.watched').removeClass("hidden");
+			$('.searchView').html("Movie History > Watched");
 			console.log(buttonValue);
 			break;
-		case "favourites": 
-			console.log(buttonValue);
-			break;
-	}
+				// var thisVar = $.each(movieData, function(movie, watched) {
+				// console.log("thisVar");
+	}		
+	
+
+
 });
 
+
+$("#slider").change((event)=>{
+	console.log($("#slider").val()); //this line will be replaced with a function that filters movies by rating
+});
 
 /* 
 
 Function that checks OMDb and our firebase database for specific keywords
 to search movies with the search input.
 */
-let formControl = (submitValue) => {
-	$('.card').remove();
-	let yearPattern = /[0-9]/g;
-	let searchValues = submitValue.split(" ");
-	let yearValues = [];
-	let keyWordValues = [];
-	for (var search = 0; search < searchValues.length; search++) {
-		if (searchValues[search].length === 4 && searchValues[search].match(yearPattern)) {
-			yearValues.push(searchValues[search]);
-		} else {
-			keyWordValues.push(searchValues[search]);
-		}
-	}
-	//go to firebase to search related movies
-	// readFirebase.readMovies();
-	//also go to movie load to compare movies with the api call
-
-	if (keyWordValues.length === 0) {
-		console.log(movieLoad.pullMovieByTitle(yearValues[0]));
-	} else {
-		if (yearValues.length === 0) {
-			console.log(movieLoad.pullMovieByTitle(submitValue));
-		} else {
-			console.log(movieLoad.pullMovieByTitle(keyWordValues.join(" "), yearValues[0]));
-		}
-	}
-};
 
 $('.form-control').keyup(function(event) {
-    var code = event.which; 
-    if(code==13) {
-    	formControl(event.target.value);
-    	event.target.value = '';
-    }
+  
+    	if(event.which == 13) {
+        	// console.log('this.value line 180:', $(this).val());
+        	movieLoad.pullMovieByTitle($(this).val())
+			.then((movieData)=>{
+			// console.log('movieData passed to parse:', movieData);
+			 movieLoad.parseMovies(movieData)
+			 .then((moviesArray)=>{
+			 	$(".form-control").html("");
+			 	printer.printCards(moviesArray);
+			 	clickRegister();//puts the listener on the button
+			 });
+			 
+		});
+   }
+
 });
-
-$('.form-control-btn').click(function(event) {
-	formControl($('.form-control').val());
-	document.getElementsByClassName("form-control")[0].value = '';
-});
-
-
 /* 
 
-This function adds movies dto the user's watched-list within firebase and changes the 
+This function adds movies to the user's watched-list within firebase and changes the 
 watched boolean value to false. It also adds the movie to the user's movie list.
 */
 
-$('.card').click(function(event) {
-	if (event.target.hasClass('watchlist')) {
-		//unwatched is a sass comp that removes hidden from the star-rating
-		//as well at the delete movie button.
-		$(this).addClass('.unwatched');
-		//takes the card id and sorts it through the dom-array
-		updateUser.sortMovie(event.target.id).then(
-			//sortMovie() brings back a movie obj  to be sent to firebase for the 
-			//user's movie-list
-			(movieObj) => updateUser.updateFirebase(movieObj)
-		);
-	}
-});
+//instead of calling function could use jquery live: $(".add-to-watchlist").live('click', function(event)
+function clickRegister() {
+	$(".add-to-watchlist").click(function(event) {
+		// console.log("you clicked addtowatchlist");
+		$(this).closest(".card").addClass("unwatched").removeClass("untracked");
+		// console.log('this', $(this));
+		let movieId = $(this).attr("id");
+		let userID = $(this).closest(".card").attr("id");
+		// console.log('userID to send:', userID);
 
+		let thisArray = movieLoad.getMoviesArray();
+		// console.log('thisArray:', thisArray);
+		let movieTarget = thisArray.filter((movie)=> movie.uid == userID && movie.id == movieId);
+		 // console.log('movieTarget should be false:', movieTarget);
+		 movieTarget[0].watchlist = true;
+		 movieTarget[0].untracked = false;
 
-/*
-
-Changes the card's watch to true. Also includes sass comp that 
-changes the background-color and star-rating to whatever the user chooses
-*/
-
-$('.star-rating').change(function(event) {
-	$(this).parent('.movie').addClass('watched');
-	let watch = true;
-	let targetVal = parseInt($(event.target).val());
-	let ratingType = null;
-	let determineValue = () => {
-		if (targetVal > 0 && targetVal <= 3) {
-			ratingType = "low";
-		} else if (targetVal > 3 && targetVal <= 6) {
-			ratingType = "midrange";
-		} else if (targetVal > 6 && targetVal <= 9) {
-			ratingType = "highrange";
-		} else {
-			ratingType = "favourite";
-		}
-	};
-	determineValue().then(
-		updateUser.changeToWatched(watch, targetVal, ratingType)
-	);
-});
+		console.log('movieTarget:', movieTarget);
+		updateUser.addMovie(movieTarget[0]);
+	});
+}
 
 
 /*
@@ -251,32 +228,34 @@ Listens for a card to be deleted from the movie list
 ONLY AVALABLE WITH THE USER'S WATCHED OR UNWATCHED MOVIES
 */
 
-$('.movie-delete').click(function(event) {
-	let cardMovieId = $(this).parent('.movie-card').id;
-	$(this).parent('.movie-card').remove();
-	removeUser.removeFromLocalArray(cardMovieId).then(
-		(cardMovieObj) => removeUser.removeFromFirebase(cardMovieObj)
-	);
-});
 
 
-/*
+$(document).on("click", ".delete", (function(event) {
+	// let movieId = $(this).attr("id");
+	// console.log('movieId to delete:', movieId);
+	let userID = $(this).closest(".card").attr("id");
+	console.log('userID to send:', userID);
+	// let thisArray = movieLoad.getMoviesArray();
+	// console.log('thisArray:', thisArray);
+	// let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
+	// console.log('movieTarget:', movieTarget); 
+	// let movieObjId = movieTarget[0].id;
+	// console.log('movieObjId:', movieObjId);
+	readFirebase.getMovies(userID)
+	.then((userMovies)=>readFirebase.parseFireBase(userMovies))
+	.then((userMovies)=>{
+		console.log('userMovies line 223:', userMovies);
 
-Listens for when the user wants to sign out of their account, sign up, 
-or a different user would like to sign in.
-*/
+	 	// let deleteKey = ;
+	 	// removeUser.deleteMovie(deleteKey);
+	});
 
-$('.login-user').click(function(event) {
-	createUser.logIn();
-});
+	// $(this).closest(".card").remove();
+	
+	
 
-$('.logout-user').click(function(event) {
-	createUser.logOut();
-});
+}));
 
-$('.get-user').click(function(event) {
-	createUser.getUser();
-});
 
 
 
