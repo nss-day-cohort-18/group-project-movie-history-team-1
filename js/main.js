@@ -40,8 +40,6 @@ let config = require('./firebase-js/configFirebase.js'),
 	removeUser = require('./firebase-js/deleteFirebase.js'),
 	movieLoad = require('./movies/movieLoad.js'),
 	printer = require ('./templates/movieTemplate.js');
-// test for api call for movie info
-// console.log("hello?", movieLoad.pullMovieByTitle("rambo"));
 
 /*============================================*/
 /*==================LOGIN=====================*/
@@ -147,8 +145,6 @@ $("#slider").change((event)=>{
 	console.log($("#slider").val()); //this line will be replaced with a function that filters movies by rating
 });
 
-
-
 /* 
 
 Function that checks OMDb and our firebase database for specific keywords
@@ -164,16 +160,12 @@ $('.form-control').keyup(function(event) {
 			// console.log('movieData passed to parse:', movieData);
 			 movieLoad.parseMovies(movieData)
 			 .then((moviesArray)=>{
-			 //add to firbase as untracked
-			 updateUser.addMovies(moviesArray)
-			 .then((moviesArray)=>{
 			 	$(".form-control").html("");
 			 	printer.printCards(moviesArray);
 			 	clickRegister();//puts the listener on the button
 			 });
 			 
 		});
-     });
    }
 
 });
@@ -187,49 +179,24 @@ watched boolean value to false. It also adds the movie to the user's movie list.
 //instead of calling function could use jquery live: $(".add-to-watchlist").live('click', function(event)
 function clickRegister() {
 	$(".add-to-watchlist").click(function(event) {
-		console.log("you clicked addtowatchlist");
+		// console.log("you clicked addtowatchlist");
 		$(this).closest(".card").addClass("unwatched").removeClass("untracked");
-		console.log('this', $(this));
+		// console.log('this', $(this));
 		let movieId = $(this).attr("id");
 		let userID = $(this).closest(".card").attr("id");
-		console.log('userID to send:', userID);
+		// console.log('userID to send:', userID);
 
 		let thisArray = movieLoad.getMoviesArray();
-		console.log('thisArray:', thisArray);
-		let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
-		console.log('movieTarget should be false:', movieTarget);
+		// console.log('thisArray:', thisArray);
+		let movieTarget = thisArray.filter((movie)=> movie.uid == userID && movie.id == movieId);
+		 // console.log('movieTarget should be false:', movieTarget);
 		 movieTarget[0].watchlist = true;
+		 movieTarget[0].untracked = false;
+
 		console.log('movieTarget:', movieTarget);
 		updateUser.addMovie(movieTarget[0]);
 	});
 }
-
-/*
-
-Changes the card's watch to true. Also includes sass comp that 
-changes the background-color and star-rating to whatever the user chooses
-*/
-
-// $('.star-rating').change(function(event) {
-// 	$(this).parent('.movie').addClass('watched');
-// 	let watch = true;
-// 	let targetVal = parseInt($(event.target).val());
-// 	let ratingType = null;
-// 	let determineValue = () => {
-// 		if (targetVal > 0 && targetVal <= 3) {
-// 			ratingType = "low";
-// 		} else if (targetVal > 3 && targetVal <= 6) {
-// 			ratingType = "midrange";
-// 		} else if (targetVal > 6 && targetVal <= 9) {
-// 			ratingType = "highrange";
-// 		} else {
-// 			ratingType = "favourite";
-// 		}
-// 	};
-// 	determineValue().then(
-// 		updateUser.changeToWatched(watch, targetVal, ratingType)
-// 	);
-// });
 
 
 /*
@@ -238,13 +205,33 @@ Listens for a card to be deleted from the movie list
 ONLY AVALABLE WITH THE USER'S WATCHED OR UNWATCHED MOVIES
 */
 
-$('.movie-delete').click(function(event) {
-	let cardMovieId = $(this).parent('.movie-card').id;
-	$(this).parent('.movie-card').remove();
-	removeUser.removeFromLocalArray(cardMovieId).then(
-		(cardMovieObj) => removeUser.removeFromFirebase(cardMovieObj)
-	);
-});
+
+
+$(document).on("click", ".delete", (function(event) {
+	// let movieId = $(this).attr("id");
+	// console.log('movieId to delete:', movieId);
+	let userID = $(this).closest(".card").attr("id");
+	console.log('userID to send:', userID);
+	// let thisArray = movieLoad.getMoviesArray();
+	// console.log('thisArray:', thisArray);
+	// let movieTarget = thisArray.filter((movie)=> movie.user == userID && movie.id == movieId);
+	// console.log('movieTarget:', movieTarget); 
+	// let movieObjId = movieTarget[0].id;
+	// console.log('movieObjId:', movieObjId);
+	readFirebase.getMovies(userID)
+	.then((userMovies)=>readFirebase.parseFireBase(userMovies))
+	.then((userMovies)=>{
+		console.log('userMovies line 223:', userMovies);
+
+	 	// let deleteKey = ;
+	 	// removeUser.deleteMovie(deleteKey);
+	});
+
+	// $(this).closest(".card").remove();
+	
+	
+
+}));
 
 
 /*
